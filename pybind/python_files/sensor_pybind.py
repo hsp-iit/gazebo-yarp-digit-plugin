@@ -43,24 +43,39 @@ class Sensor:
         :param visualize_gui: Bool
         :param show_depth: Bool
         :param config_path:
-        :param cid: Int
         """
-        self.cid = 0
-        self.width=120
-        self.height=160
-        bg = cv2.imread("../../tacto/examples/conf/bg_digit_240_320.jpg") #
-        print(bg)
-        self.renderer = Renderer(self.width, self.height, bg, get_digit_config_path())
-        self.visualize_gui = True
-        self.show_depth = True
+       
+        #resolution parameters and camera parameter
+        self.width=240
+        self.height=320
         self.zrange = 0.002
+
+        #load the background image
+        bg = cv2.imread("../../tacto/examples/conf/bg_digit_240_320.jpg")
+        
+        #call the renderer 
+        self.renderer = Renderer(self.width, self.height, bg, get_digit_config_path())
+        
+        #These booleans are not strictly necessary right now, but we are keeping them for future implementation
+        #These tell us if we wanna visualize and, in that case, if we wanna visualize alsothe depth image
+        self.visualize_gui = True 
+        self.show_depth = True
+
+        #dictionaries useful to store forces related to objects and sensor and to store objects positions       
         self.object_poses = {}
         self.normal_forces = {}
+        
+        #useful for printing the image 
         self._static = None
+        
+        #right now we are using just one object
+        self.object_name=None #nome dell'oggetto
+        
+        #variable needed just for simulation purpose (sinusoidal)
         self.position= 0
 
     #method to call when we have to add an object to the scene
-    def add_object(self, mesh, obj_id, position=[0.0,0.0,0.0], orientation = [0.0,0.0,0.0], globalScaling=1.0): #global scaling is not useful anymore
+    def add_object(self, mesh, obj_name, position=[0.0,0.0,0.0], orientation = [0.0,0.0,0.0], globalScaling=1.0): #global scaling is not useful anymore, we can directly scale the mesh if we want the ball smaller. In principle was 0.15
 
         # Load the mesh
         obj_trimesh = trimesh.load(mesh)
@@ -70,12 +85,7 @@ class Sensor:
         obj_trimesh.visual = trimesh.visual.ColorVisuals()
 
 
-        #the renderer expects to receive a certain name
-        #we are keeping the same notation as before
-        #it is not necessary
-        obj_name = "{}_{}".format(2, -1)
-
-
+        #start position of the object
         self.object_poses[obj_name]=position, orientation 
 
 
@@ -103,23 +113,39 @@ class Sensor:
         colors = [self.renderer._add_noise(color) for color in colors]
         return colors, depths
 
-    def render(self):
+    def render(self, objects_positions, objects_orientations): #we are adding the real-time position and orientation
 
         colors = []
         depths = []
 
-       
-        cam_name = "cam0" 
-
+        
         # get the contact normal forces
         # At the moment, we are forcing a certain value since we are have no physical environment
+        
+        #Here I'm hardwiring the force of the object just for simulation purpose
+        self.normal_forces["ball"] = 10.0
+        
+        if self.normal_forces["ball"] >0.0:
 
-        self.normal_forces["2_-1"] = 10.0
-        if self.normal_forces["2_-1"] >0.0:
+            #position and orientation from the quaternion of the initial position of the sensor
             position, orientation = [0.0,0.0,0.0],[0.0, -1.5707963267948966,0.0] #self.cameras[cam_name].get_pose()
             self.renderer.update_camera_pose(position, orientation)
+
+            #in theory we can have multiple objects
+            existing_objects=list(self.object_poses.keys())
+
+            for word in existing_objects:
+
+                for coord in range(0,3):
+
+                    self.object_poses[word][0][coord]= objects_positions[word][coord]
+                    self.object_poses[word][1][coord]= objects_orientations[word][coord]
+
+            #these two lines are useful just for simulation purpose
             self.position+=0.2
-            self.object_poses["2_-1"][0][2]+=math.sin(self.position)/400#we are just adding a sinusoid in order to see how the image given by the sensor changes
+            self.object_poses["ball"][0][2]+=math.sin(self.position)/400#we are just adding a sinusoid in order to see how the image given by the sensor changes
+
+
             color, depth = self.renderer.render(self.object_poses, self.normal_forces)
 
             # Remove the depth from curved gel
@@ -136,6 +162,8 @@ class Sensor:
     def _depth_to_color(self, depth):
         gray = (np.clip(depth / self.zrange, 0, 1) * 255).astype(np.uint8)
         return cv2.cvtColor(gray, cv2.COLOR_GRAY2BGR)
+    
+    #The old update GUI method    
     """
     def updateGUI(self, colors, depths):
         """"""
@@ -160,10 +188,12 @@ class Sensor:
         else:
             cv2.imshow("color", color)
         cv2.waitKey(1)"""
+
+
     def updateGUI(self, colors, depths):
         """
         Update images for visualization
-        
+        In theory we can eliminate the if statement and just return color, visualize_gui adn show_depth are hardwired
         """
         if not self.visualize_gui:
             return
@@ -188,7 +218,7 @@ class Sensor:
             #cv2.waitKey(1)
             return color
         
-
-    def get_image(self):                            #method to call when we want to save and visualize an image
-        colors, depth=self.render()
+    #the method to call from external to receive the image
+    def get_image(self, objects_positions, objects_orientations):                            #method to call when we want to save and visualize an image
+        colors, depth=self.render(objects_positions, objects_orientations)
         return self.updateGUI(colors, depth)

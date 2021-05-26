@@ -1,8 +1,0 @@
-/home/icub/pybind/build/CMakeFiles/install/strip.dir
-/home/icub/pybind/build/CMakeFiles/install/local.dir
-/home/icub/pybind/build/CMakeFiles/uninstall.dir
-/home/icub/pybind/build/CMakeFiles/wrapper.dir
-/home/icub/pybind/build/CMakeFiles/edit_cache.dir
-/home/icub/pybind/build/CMakeFiles/rebuild_cache.dir
-/home/icub/pybind/build/CMakeFiles/list_install_components.dir
-/home/icub/pybind/build/CMakeFiles/install.dir
