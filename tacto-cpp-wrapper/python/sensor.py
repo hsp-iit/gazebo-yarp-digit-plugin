@@ -6,12 +6,6 @@ from tacto import Renderer
 import sys
 
 
-# Check if sys.argv is defined. This is required to make this module loadable from the pybind C++ interface.
-if not hasattr(sys, 'argv'):
-    sys.argv  = ['']
-
-
-
 class Sensor:
 
     def __init__(self, background_path, configuration_path):
