@@ -30,7 +30,6 @@ int main(int argc, char** argv)
     /* Initialize the interpreter. */
     py::scoped_interpreter guard {};
 
-
     /* Import the class from the module. */
     py::object sensor_module = py::module_::import("sensor_pybind").attr("Sensor");
 
@@ -38,26 +37,21 @@ int main(int argc, char** argv)
     /* Instantiate an object of the class. */
     py::object sensor = sensor_module("background_path"_a = "../../../tacto/examples/conf/bg_digit_240_320.jpg", "configuration_path"_a = "../../../tacto/tacto/config_digit.yml");
 
-
     /* Initialize the position of the sensor. */
     std::vector<double> position_vector_sensor{0.0, 0.0, 0.0};
     py::list position_sensor = py::cast(position_vector_sensor);
-
 
     /* Initialize the orientation of the sensor. */
     std::vector<double> orientation_vector_sensor{0.0, -1.5707963267948966,0.0};
     py::list orientation_sensor = py::cast(orientation_vector_sensor);
 
-
     /* Initialize the position of the object. */
     std::vector<double> position_vector_object{-0.015, 0.0, 0.048};
     py::list position_object = py::cast(position_vector_object);
 
-
     /* Initialize the orientation of the object. */
     std::vector<double> orientation_vector_object{0.0, 0.0, 0.0};
     py::list orientation_object = py::cast(orientation_vector_object);
-
 
     /* Initialize the name of the object. */
     py::str ball = "ball";
@@ -66,20 +60,16 @@ int main(int argc, char** argv)
     py::object add_object = sensor.attr("add_object");
     add_object("mesh"_a = "../mesh/textured_sphere_smooth_meters.obj", "object_name"_a = ball, "position"_a = position_object, "orientation"_a = orientation_object);
 
-
     /* Initialize YARP port. */
     Network yarp;
     BufferedPort<ImageOf<PixelRgb>> port;
     port.open("/gazebo-yarp-digit-plugin/output:o");
 
-
     /* Initialize the output image. */
     cv::Mat img;
 
-
     /* Initiliaze variable for simulation purpose. */
     double sinusoidal = 0;
-
 
     while (true)
     {
@@ -91,23 +81,19 @@ int main(int argc, char** argv)
         /* Get the image. */
         py::array_t<uint8_t> rgb = sensor.attr("render")("object_position"_a = position_object, "object_orientation"_a = orientation_object, "sensor_position"_a = position_sensor, "sensor_orientation"_a = orientation_sensor, "force"_a = 10.0);
 
-
         /* Convert the image. */
         img = cv::Mat(rgb.shape(0), rgb.shape(1), CV_8UC3, (unsigned char*)rgb.data());
-
 
         /* Prepare the output and convert fromCVMat. */
         ImageOf<PixelRgb>& output = port.prepare();
         output = yarp::cv::fromCvMat<PixelRgb>(img);
 
-
         /* Write into the port. */
         port.write();
-
 
         /* Limit update rate. */
         std::this_thread::sleep_for(30ms);
     }
-    return EXIT_SUCCESS;
 
+    return EXIT_SUCCESS;
 }
