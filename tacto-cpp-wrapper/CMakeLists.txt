@@ -1,6 +1,4 @@
-cmake_minimum_required(VERSION 3.16)
-
-project(tacto-cpp-wrapper)
+set(TARGET_NAME tacto-cpp-wrapper)
 
 include(GNUInstallDirs)
 
@@ -14,7 +12,9 @@ find_package(OpenCV REQUIRED)
 
 find_package(YARP REQUIRED COMPONENTS os sig cv)
 
-add_executable(${PROJECT_NAME} src/main.cpp)
+add_definitions(-DSOURCE_PATH=\"${CMAKE_SOURCE_DIR}\")
+
+add_executable(${TARGET_NAME} src/main.cpp)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE
                                       ${OpenCV_LIBS}
