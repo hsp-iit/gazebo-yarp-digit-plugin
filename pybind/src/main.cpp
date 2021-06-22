@@ -27,7 +27,6 @@ using namespace std::chrono_literals;
 
 int main(int argc, char** argv)
 {
-
     /* Initialize the interpreter. */
     py::scoped_interpreter guard {};
 
