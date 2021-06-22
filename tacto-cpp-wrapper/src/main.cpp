@@ -51,7 +51,12 @@ int main(int argc, char** argv)
     py::object sensor_module = py::module::import("sensor").attr("Sensor");
 
     /* Instantiate an object of the class. */
-    py::object sensor = sensor_module("background_path"_a = "../../../tacto/examples/conf/bg_digit_240_320.jpg", "configuration_path"_a = "../../../tacto/tacto/config_digit.yml");
+
+    py::object sensor = sensor_module
+    (
+        "background_path"_a = tacto_path + "/examples/conf/bg_digit_240_320.jpg",
+        "configuration_path"_a = tacto_path + "/tacto/config_digit.yml"
+    );
 
     /* Initialize the position of the sensor. */
     std::vector<double> position_vector_sensor{0.0, 0.0, 0.0};
@@ -74,7 +79,13 @@ int main(int argc, char** argv)
 
     /* Add object. */
     py::object add_object = sensor.attr("add_object");
-    add_object("mesh"_a = "../mesh/textured_sphere_smooth_meters.obj", "object_name"_a = ball, "position"_a = position_object, "orientation"_a = orientation_object);
+    add_object
+    (
+        "mesh"_a = tacto_cpp_wrapper_path + "/mesh/textured_sphere_smooth_meters.obj",
+        "object_name"_a = ball,
+        "position"_a = position_object,
+        "orientation"_a = orientation_object
+    );
 
     /* Initialize YARP port. */
     Network yarp;
@@ -95,7 +106,14 @@ int main(int argc, char** argv)
         position_object = py::cast(position_vector_object);
 
         /* Get the image. */
-        py::array_t<uint8_t> rgb = sensor.attr("render")("object_position"_a = position_object, "object_orientation"_a = orientation_object, "sensor_position"_a = position_sensor, "sensor_orientation"_a = orientation_sensor, "force"_a = 10.0);
+        py::array_t<uint8_t> rgb = sensor.attr("render")\
+        (
+            "object_position"_a = position_object,
+            "object_orientation"_a = orientation_object,
+            "sensor_position"_a = position_sensor,
+            "sensor_orientation"_a = orientation_sensor,
+            "force"_a = 10.0
+        );
 
         /* Convert the image. */
         img = cv::Mat(rgb.shape(0), rgb.shape(1), CV_8UC3, (unsigned char*)rgb.data());
