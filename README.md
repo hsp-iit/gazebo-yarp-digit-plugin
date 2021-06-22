@@ -32,22 +32,30 @@ pip install -r requirements/examples.txt
 ```
 The last command installs the necessary requirements for running the TACTO examples, some of them are not strictly necessary.
 
+## How to build
 
-## Launch example
-The code simulates the contact between the sensor and a small ball which touches the sensor periodically.
-Launch the YARP server
 ```
-yarpserver
-```
-Open another terminal in the gazebo-yarp-digit-plugin directory, create a build directory, install and launch the binary:
-```
+cd gazebo-yarp-digit-plugin
 mkdir build
 cd build
 cmake ../
 make
+```
+
+## Launch example
+The code simulates the contact between the sensor and a small ball which touches the sensor periodically.
+
+Launch the YARP server
+```
+yarpserver
+```
+
+Launch the provided `wrapper` module:
+```
+cd gazebo-yarp-digit-plugin/build
 ./bin/wrapper
 ```
-Then, in another terminal, launch yarpview:
+Launch a yarpview:
 ```
 yarpview
 ```
