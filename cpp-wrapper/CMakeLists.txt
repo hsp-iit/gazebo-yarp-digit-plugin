@@ -9,10 +9,13 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR}"
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR}")
 
 find_package(pybind11 CONFIG)
+
 find_package(OpenCV REQUIRED)
+
 find_package(YARP REQUIRED COMPONENTS os sig cv)
 
 add_executable(${PROJECT_NAME} src/main.cpp)
+
 target_link_libraries(${PROJECT_NAME} PRIVATE
                                       ${OpenCV_LIBS}
                                       pybind11::embed
