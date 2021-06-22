@@ -47,6 +47,8 @@ int main(int argc, char** argv)
      */
     py::module::import("sys").attr("argv").attr("insert")(0, "");
 
+    /* Import the class from the module. */
+    py::object sensor_module = py::module::import("sensor").attr("Sensor");
 
     /* Instantiate an object of the class. */
     py::object sensor = sensor_module("background_path"_a = "../../../tacto/examples/conf/bg_digit_240_320.jpg", "configuration_path"_a = "../../../tacto/tacto/config_digit.yml");
