@@ -16,11 +16,11 @@ add_definitions(-DSOURCE_PATH=\"${CMAKE_SOURCE_DIR}\")
 
 add_executable(${TARGET_NAME} src/main.cpp)
 
-target_link_libraries(${PROJECT_NAME} PRIVATE
-                                      ${OpenCV_LIBS}
-                                      pybind11::embed
-                                      YARP::YARP_cv
-                                      YARP::YARP_init
-                                      YARP::YARP_os
-                                      YARP::YARP_sig
+target_link_libraries(${TARGET_NAME} PRIVATE
+                                     pybind11::embed
+                                     YARP::YARP_cv
+                                     YARP::YARP_init
+                                     YARP::YARP_os
+                                     YARP::YARP_sig
+                                     ${OpenCV_LIBS}
 )
