@@ -30,8 +30,22 @@ int main(int argc, char** argv)
     /* Initialize the interpreter. */
     py::scoped_interpreter guard {};
 
-    /* Import the class from the module. */
-    py::object sensor_module = py::module_::import("sensor_pybind").attr("Sensor");
+    /**
+     * Add the absolute path to the 'sensor' and 'tacto' python modules.
+     * The definition 'SOURCE_PATH' is set in the CMakeLists.txt.
+     */
+    std::string tacto_cpp_wrapper_path = std::string(SOURCE_PATH) + "/tacto-cpp-wrapper";
+    std::string tacto_path = std::string(SOURCE_PATH) + "/build/_deps/tacto-src";
+
+    py::object sys_path_insert = py::module::import("sys").attr("path").attr("insert");
+    sys_path_insert(0, tacto_cpp_wrapper_path + "/python");
+    sys_path_insert(0, tacto_path);
+
+    /**
+     * Running the interpreter from here will cause sys.argv to be empty.
+     * Hence, a fake entry is added given that many python modules relies on the availability of sys.argv[0].
+     */
+    py::module::import("sys").attr("argv").attr("insert")(0, "");
 
 
     /* Instantiate an object of the class. */
