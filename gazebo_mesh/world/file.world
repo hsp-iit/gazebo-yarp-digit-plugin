@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<sdf version="1.4">
+  <world name="default">
+    <include>
+      <uri>model://ground_plane</uri>
+    </include>
+
+    <include>
+      <uri>model://sun</uri>
+    </include>
+
+    <include>
+      <uri>model://digit</uri>
+    </include>
+
+   <model name="sphere">
+      <link name="link">
+        <pose>0.08 0 0.02 0 0 0</pose>
+
+        <collision name="sphere_collision">
+          <geometry>
+            <sphere>
+              <radius>0.02</radius>
+            </sphere>
+          </geometry>
+        </collision>
+
+        <visual name="visual_collision">
+          <geometry>
+            <sphere>
+              <radius>0.02</radius>
+            </sphere>
+          </geometry>
+        </visual>
+      </link>
+
+      <joint name= "fixed" type= "fixed">
+        <parent> world</parent>
+        <child> link</child>
+    </joint>
+    </model>
+  </world>
+</sdf>
