@@ -19,7 +19,7 @@
       </inertial>
       <collision name="digit_collision">
         <geometry>
-          <mesh><uri>./digit.STL</uri></mesh>
+          <mesh><uri>./digit_less.STL</uri></mesh>
         </geometry>
       </collision>
 

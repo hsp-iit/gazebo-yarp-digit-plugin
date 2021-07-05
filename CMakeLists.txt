@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.12)
+cmake_minimum_required(VERSION 3.16)
 
 project(gazebo-yarp-digit-plugin)
 
@@ -15,3 +15,7 @@ message("-- Downloading tacto repository...")
 FetchContent_MakeAvailable(tacto)
 
 add_subdirectory(tacto-cpp-wrapper)
+add_subdirectory(ControlDigitPlugin)
+add_subdirectory(RendererDigitPlugin)
+add_subdirectory(models)
+add_subdirectory(worlds)

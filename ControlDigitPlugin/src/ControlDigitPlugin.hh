@@ -1,5 +1,5 @@
-#ifndef _RENDERER_DIGIT_PLUGIN_HH_
-#define  _RENDERER_DIGIT_PLUGIN_HH_
+#ifndef _CONTROL_DIGIT_PLUGIN_HH_
+#define  _CONTROL_DIGIT_PLUGIN_HH_
 
 #include <cmath>
 #include <chrono>
@@ -11,27 +11,26 @@
 #include <gazebo/gazebo.hh>
 #include <gazebo/physics/physics.hh>
 #include <gazebo/physics/Model.hh>
-#include <gazebo/physics/Link.hh>
 #include <gazebo/physics/World.hh>
-#include "gazebo/sensors/sensors.hh"
 
 #include <ignition/math/Vector3.hh>
-
+#include <thread>
+using namespace std::chrono_literals;
 namespace gazebo
 {
-    class RendererDigitPlugin;
+    class ControlPlugin;
 
 }
 
-class gazebo::RendererDigitPlugin : public ModelPlugin
+class gazebo::ControlPlugin : public ModelPlugin
 {
     public:
 
-        RendererDigitPlugin();
+        ControlPlugin();
 
-        ~RendererDigitPlugin();
+        ~ControlPlugin();
 
-        void Load(physics::ModelPtr model, sdf::ElementPtr sdf);
+        void Load(physics::ModelPtr _model, sdf::ElementPtr _sdf);
 
         void UpdatePosition();
 
@@ -43,18 +42,9 @@ class gazebo::RendererDigitPlugin : public ModelPlugin
         /* Pointer to the connection. */
         event::ConnectionPtr updateConnection;
 
-        /* Pointer to the SDF value. */
-        sdf::ElementPtr sdf;
-
-        /* PID controller. */
-
+        /* Time and position variable to control the sinusoidal movement of the senso. */
         double time = 0;
-
         double position = 0;
-
-
-        /* Pointer to the sensor. */
-        gazebo::sensors::ContactSensorPtr sensor;
 
         /* Flag to handle the first cycle. */
         bool flag = false;

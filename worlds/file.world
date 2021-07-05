@@ -15,21 +15,22 @@
 
    <model name="sphere">
       <link name="link">
-        <pose>0.08 0 0.02 0 0 0</pose>
-
+        <pose>0.05 0 0.02 0 0 0</pose>
         <collision name="sphere_collision">
           <geometry>
-            <sphere>
-              <radius>0.02</radius>
-            </sphere>
+              <sphere>
+                  <radius>0.009</radius>
+              </sphere>
+
           </geometry>
-        </collision>
+      </collision>
 
         <visual name="visual_collision">
           <geometry>
-            <sphere>
-              <radius>0.02</radius>
-            </sphere>
+              <mesh>
+                  <uri>./../tacto-cpp-wrapper/mesh/textured_sphere_smooth_meters.obj</uri>
+
+              </mesh>
           </geometry>
         </visual>
       </link>

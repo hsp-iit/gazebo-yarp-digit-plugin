@@ -90,7 +90,7 @@ int main(int argc, char** argv)
     /* Initialize YARP port. */
     Network yarp;
     BufferedPort<ImageOf<PixelRgb>> port;
-    port.open("/gazebo-yarp-digit-plugin/output:o");
+    port.open("/gazebo-yarp-digit-plugin-old/output:o");
 
     /* Initialize the output image. */
     cv::Mat img;
@@ -99,7 +99,7 @@ int main(int argc, char** argv)
     double sinusoidal = 0;
 
     while (true)
-    {
+    {   //auto start = std::chrono::steady_clock::now();
         /* Update position of the object for simulaiton purpose. */
         sinusoidal += 0.2;
         position_vector_object[2] += sin(sinusoidal) / 400;
@@ -114,6 +114,7 @@ int main(int argc, char** argv)
             "sensor_orientation"_a = orientation_sensor,
             "force"_a = 10.0
         );
+        //std::cout<<std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now()- start).count()<<std::endl;
 
         /* Convert the image. */
         img = cv::Mat(rgb.shape(0), rgb.shape(1), CV_8UC3, (unsigned char*)rgb.data());
