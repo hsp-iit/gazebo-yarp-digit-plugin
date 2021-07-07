@@ -18,8 +18,9 @@
         </inertia>
       </inertial>
       <collision name="digit_collision">
+        <pose>0.0006 0 0 0 0 0</pose>
         <geometry>
-          <mesh><uri>./digit_less.STL</uri></mesh>
+          <mesh><uri>./gel.stl</uri></mesh>
         </geometry>
       </collision>
 
@@ -29,7 +30,6 @@
         </geometry>
       </visual>
       <sensor name='contact_digit' type='contact'>
-
           <contact>
             <collision>digit_collision</collision>
           </contact>
