@@ -23,7 +23,23 @@
           <mesh><uri>./gel.stl</uri></mesh>
         </geometry>
       </collision>
-
+      <collision name="digit_collision_body_box">
+        <pose>0.002 0 0.013 0 0 0</pose>
+        <geometry>
+          <box>
+              <size>0.027 0.026 0.024</size>
+         </box>
+        </geometry>
+      </collision>
+      <collision name="digit_collision_body_cylinder">
+        <pose>0.002 0 0.02 0 1.6 0</pose>
+        <geometry>
+            <cylinder>
+              <radius>0.014</radius>
+              <length>0.025</length>
+            </cylinder>
+          </geometry>
+      </collision>
 
       <visual name="visual">
         <geometry>
