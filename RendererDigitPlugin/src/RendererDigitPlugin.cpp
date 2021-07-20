@@ -162,11 +162,11 @@ void gazebo::RendererPlugin::CallTheRenderer()
 		position_vector_sensor = {this->pose_sensor_.X(), this->pose_sensor_.Y(), this->pose_sensor_.Z()};
 		position_sensor_thread = pybind11::cast(position_vector_sensor);
 
-		orientation_vector_sensor = {this->pose_sensor_.Rot().Euler().X(), this->pose_sensor_.Rot().Euler().X(), this->pose_sensor_.Rot().Euler().X()};
+		orientation_vector_sensor = {this->pose_sensor_.Rot().Euler().X(), this->pose_sensor_.Rot().Euler().Y(), this->pose_sensor_.Rot().Euler().Z()};
 		orientation_sensor_thread = pybind11::cast(orientation_vector_sensor);
 
-		force=this->forces_;
-
+		/* Change the sign of the force since the renderer expects a positive force. */
+		force=abs(this->forces_);
 		semaphor_.unlock();
 
 		/* Call the renerer. */
@@ -176,9 +176,8 @@ void gazebo::RendererPlugin::CallTheRenderer()
 			"object_orientation"_a = orientation_object,
 			"sensor_position"_a = position_sensor_thread,
 			"sensor_orientation"_a = orientation_sensor_thread,
-			"force"_a =  force
+			"force"_a = force
 		);
-
 		/* Convert the image. */
 		img = cv::Mat(rgb.shape(0), rgb.shape(1), CV_8UC3, (unsigned char*)rgb.data());
 
@@ -200,15 +199,16 @@ void gazebo::RendererPlugin::UpdatePosition()
 	msgs::Contacts contacts;
 	contacts = this->sensor_->Contacts();
 
-	float force = 0;
+	/* Initialize two variables keeping into account DART behaviour. */
+	float force1 = 0;
+	float force2= 0;
 
 	for (unsigned int i = 0; i < contacts.contact_size(); ++i)
 	{
-		//std::cout << "siamo al contatto1 numero " << i << '\n';
 		for (unsigned int j = 0 ; j<contacts.contact(i).position_size(); ++j)
 		{
-			//std::cout<<contacts.contact(i).wrench(j).body_1_wrench().force().x()<<std::endl;
-			force +=  (float)contacts.contact(i).wrench(j).body_1_wrench().force().x();
+			force1 +=  (float)contacts.contact(i).wrench(j).body_1_wrench().force().x();
+			force2 +=  (float)contacts.contact(i).wrench(j).body_2_wrench().force().x();
 
 	  }
 	}
@@ -216,7 +216,23 @@ void gazebo::RendererPlugin::UpdatePosition()
 	/* Adjourn position and forces inside the critical section. */
 	semaphor_.lock();
 
-	forces_ = force;
+	/**
+	*	Choose the negative force to be taken, due to the behavior of DART.
+	*	This if statement does not affect the other physics engine.
+	**/
+	if (force1 < force2 && force1 <0)
+	{
+		this->forces_ = force1;
+	}
+	else if (force2 < force1 && force2 <0)
+	{
+		this->forces_ = force2;
+	}
+	else
+	{
+		this->forces_ = 0;
+	}
+
 	pose_sensor_ = this->sensor_model_->GetLink()->WorldPose();
 
 	semaphor_.unlock();

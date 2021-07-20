@@ -1,7 +1,8 @@
 cmake_minimum_required(VERSION 3.16)
 
+project(Prova_hand)
 # Install worlds
-install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} DESTINATION share/gazebo)
+install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/worlds DESTINATION share/gazebo)
 include(GNUInstallDirs)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_BINDIR}")
