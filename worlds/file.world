@@ -1,59 +1,56 @@
 <?xml version="1.0"?>
 <sdf version="1.4">
-  <world name="default">
-
+    <world name="default">
     <!-- The physics type can be chose bewteen ode, dart, bullet or fcl. We tested dart and ode.
          The collision_detector with dart can be bullet, dart, fcl or ode -->
-    <physics type="ode">
-      <collision_detector>ode</collision_detector>
-    </physics>
-    <include>
-      <uri>model://ground_plane</uri>
-    </include>
+        <physics type="ode">
+            <collision_detector>ode</collision_detector>
+        </physics>
+        <include>
+            <uri>model://ground_plane</uri>
+        </include>
 
-    <include>
-      <uri>model://sun</uri>
-    </include>
+        <include>
+            <uri>model://sun</uri>
+        </include>
 
-    <include>
-      <uri>model://digit</uri>
-    </include>
+        <include>
+            <uri>model://digit</uri>
+        </include>
 
-   <model name="sphere">
-      <link name="link">
-          <mass>1</mass>
-          <inertia>
-            <ixx>.1</ixx>
-            <ixy>0</ixy>
-            <ixz>0</ixz>
-            <iyy>.1</iyy>
-            <iyz>0</iyz>
-            <izz>.1</izz>
-          </inertia>
-        <pose>0.05 0 0.04 0 0 0</pose>
-        <collision name="sphere_collision">
-          <geometry>
-              <sphere>
-                  <radius>0.009</radius>
-              </sphere>
+        <model name="sphere">
+            <link name="link">
+                <mass>1</mass>
+                <inertia>
+                    <ixx>.1</ixx>
+                    <ixy>0</ixy>
+                    <ixz>0</ixz>
+                    <iyy>.1</iyy>
+                    <iyz>0</iyz>
+                    <izz>.1</izz>
+                </inertia>
+                <pose>0.05 0 0.04 0 0 0</pose>
+                <collision name="sphere_collision">
+                    <geometry>
+                        <sphere>
+                            <radius>0.009</radius>
+                        </sphere>
+                    </geometry>
+                </collision>
 
-          </geometry>
-      </collision>
+                <visual name="visual_collision">
+                    <geometry>
+                        <mesh>
+                            <uri>./../tacto-cpp-wrapper/mesh/textured_sphere_smooth_meters.obj</uri>
+                        </mesh>
+                    </geometry>
+                </visual>
+            </link>
 
-        <visual name="visual_collision">
-          <geometry>
-              <mesh>
-                  <uri>./../tacto-cpp-wrapper/mesh/textured_sphere_smooth_meters.obj</uri>
-
-              </mesh>
-          </geometry>
-        </visual>
-      </link> -->
-
-      <joint name= "fixed" type= "fixed">
-        <parent> world</parent>
-        <child> link</child>
-    </joint>
-     </model>
-  </world>
+            <joint name= "fixed" type= "fixed">
+                <parent> world</parent>
+                <child> link</child>
+            </joint>
+        </model>
+    </world>
 </sdf>

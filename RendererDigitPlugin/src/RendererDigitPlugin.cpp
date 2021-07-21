@@ -210,15 +210,15 @@ void gazebo::RendererPlugin::UpdatePosition()
             force1 +=  (float)contacts.contact(i).wrench(j).body_1_wrench().force().x();
             force2 +=  (float)contacts.contact(i).wrench(j).body_2_wrench().force().x();
 
-        }	
+        }
     }
 
     /* Adjourn position and forces inside the critical section. */
     semaphor_.lock();
 
     /**
-    *    Choose the negative force to be taken, due to the behavior of DART.
-    *    This if statement does not affect the other physics engine.
+    * Choose the negative force to be taken, due to the behavior of DART.
+    * This if statement does not affect the other physics engine.
     **/
     if (force1 < force2 && force1 <0)
     {

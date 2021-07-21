@@ -1,81 +1,81 @@
 <?xml version= "1.0" ?>
 <sdf version ="1.6">
-  <model name= "digit">
-    <static>false</static>
-    <link name= "base">
-    <gravity>0</gravity> <!-- Gravity set to 0 -->
-    <pose>0 0 0.0248 0 0 0</pose> <!-- Z axis fixed at 0.0048 to avoid contact with the ground. -->
-      <inertial>
-        <pose>0 0 0.015  0 0 0</pose> <!-- Center of mass moved along the Z axis near the camera to prevent the sensor to rotate after contact. -->
-        <mass>.1</mass>
-        <inertia>
-          <ixx>1</ixx>
-          <ixy>0</ixy>
-          <ixz>0</ixz>
-          <iyy>1</iyy>
-          <iyz>0</iyz>
-          <izz>1</izz>
-        </inertia>
-      </inertial>
-       <!-- This part of code can be commented to have a good behavior with DART collision detector -->
+    <model name= "digit">
+        <static>false</static>
+        <link name= "base">
+            <gravity>0</gravity> <!-- Gravity set to 0 -->
+            <pose>0 0 0.0248 0 0 0</pose> <!-- Z axis fixed at 0.0048 to avoid contact with the ground. -->
+            <inertial>
+                <pose>0 0 0.015  0 0 0</pose> <!-- Center of mass moved along the Z axis near the camera to prevent the sensor to rotate after contact. -->
+                <mass>.1</mass>
+                <inertia>
+                    <ixx>1</ixx>
+                    <ixy>0</ixy>
+                    <ixz>0</ixz>
+                    <iyy>1</iyy>
+                    <iyz>0</iyz>
+                    <izz>1</izz>
+                </inertia>
+            </inertial>
+            <!-- This part of code can be commented to have a good behavior with DART collision detector -->
 
-      <collision name="digit_collision_gel">
-        <pose>0.0006 0 0 0 0 0</pose>
-        <geometry>
-          <mesh><uri>./gel.stl</uri></mesh>
-        </geometry>
-      </collision>
+            <collision name="digit_collision_gel">
+                <pose>0.0006 0 0 0 0 0</pose>
+                <geometry>
+                    <mesh><uri>./gel.stl</uri></mesh>
+                </geometry>
+            </collision>
 
-      <!-- This part of code can be decommented to have a good behavior with DART collision detector -->
+            <!-- This part of code can be decommented to have a good behavior with DART collision detector -->
 
-      <!-- <collision name= "digit_collision_gel">
-          <pose> 0.019 0 0.016 </pose>
-          <geometry>
-            <box>
-                <size>0.002 0.02 0.026</size>
-           </box>
-          </geometry>
-      </collision> -->
+            <!-- <collision name= "digit_collision_gel">
+            <pose> 0.019 0 0.016 </pose>
+            <geometry>
+                <box>
+                    <size>0.002 0.02 0.026</size>
+                </box>
+            </geometry>
+            </collision> -->
 
-      <!-- This part of code can be commented to have a good behavior with DART collision detector -->
+          <!-- This part of code can be commented to have a good behavior with DART collision detector -->
 
-      <collision name="digit_collision_body_box">
-        <pose>0.002 0 0.013 0 0 0</pose>
-        <geometry>
-          <box>
-              <size>0.027 0.026 0.024</size>
-         </box>
-        </geometry>
-      </collision>
-      <collision name="digit_collision_body_cylinder">
-        <pose>0.002 0 0.02 0 1.6 0</pose>
-        <geometry>
-            <cylinder>
-              <radius>0.014</radius>
-              <length>0.025</length>
-            </cylinder>
-          </geometry>
-      </collision>
+          <collision name="digit_collision_body_box">
+              <pose>0.002 0 0.013 0 0 0</pose>
+              <geometry>
+                  <box>
+                      <size>0.027 0.026 0.024</size>
+                  </box>
+              </geometry>
+            </collision>
+            <collision name="digit_collision_body_cylinder">
+                <pose>0.002 0 0.02 0 1.6 0</pose>
+                <geometry>
+                    <cylinder>
+                        <radius>0.014</radius>
+                        <length>0.025</length>
+                    </cylinder>
+                </geometry>
+            </collision>
 
-      <!-- Until here -->
+            <!-- Until here -->
 
-      <visual name="visual">
-        <geometry>
-          <mesh><uri>./digit.STL</uri></mesh>
-        </geometry>
-      </visual>
-      <sensor name='contact_digit' type='contact'>
-          <contact>
-            <collision>digit_collision_gel</collision>
-          </contact>
-          <update_rate> 30 </update_rate>
-        </sensor>
-    </link>
-
-
-    <plugin name="RendererDigitPlugin" filename="libRendererDigitPlugin.so"/>
-    <plugin name="ControlDigitPlugin" filename="libControlDigitPlugin.so"/>
+            <visual name="visual">
+                <geometry>
+                    <mesh><uri>./digit.STL</uri></mesh>
+                </geometry>
+            </visual>
+            <sensor name='contact_digit' type='contact'>
+                <contact>
+                    <collision>digit_collision_gel</collision>
+                </contact>
+                <update_rate> 30 </update_rate>
+            </sensor>
+        </link>
 
 
-  </model>
+        <plugin name="RendererDigitPlugin" filename="libRendererDigitPlugin.so"/>
+        <plugin name="ControlDigitPlugin" filename="libControlDigitPlugin.so"/>
+
+
+    </model>
 </sdf>
