@@ -55,7 +55,7 @@ class Sensor:
 
     def render(self, object_position, object_orientation,  sensor_position, sensor_orientation, force):
         """Render the output of the sensor."""
-        elio=[]
+
         self.object_force[self.object_name] = force
 
         if self.object_force[self.object_name] > 0:
@@ -70,7 +70,6 @@ class Sensor:
             # This function return RGB and depth matrices
             rgb, _ = self.renderer.render(self.object_pose, self.object_force)
 
-            elio = rgb
 
         else:
 
