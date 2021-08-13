@@ -37,20 +37,20 @@ class gazebo::ControlPlugin : public ModelPlugin
     private:
 
         /* Pointer to the model. */
-        physics::ModelPtr model;
+        physics::ModelPtr model_;
 
         /* Pointer to the connection. */
-        event::ConnectionPtr updateConnection;
+        event::ConnectionPtr updateConnection_;
 
         /* Time and position variable to control the sinusoidal movement of the senso. */
-        double time = 0;
-        double position = 0;
+        double time_ = 0;
+        double position_ = 0;
 
         /* Flag to handle the first cycle. */
-        bool flag = false;
+        bool flag_ = false;
 
         /* Store for the time. */
-        std::chrono::time_point<std::chrono::steady_clock> lastTime ;
+        std::chrono::time_point<std::chrono::steady_clock> lastTime_ ;
 
 
 };
