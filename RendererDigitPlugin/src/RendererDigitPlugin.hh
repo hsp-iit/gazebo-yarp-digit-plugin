@@ -1,43 +1,32 @@
+/*
+ * Copyright (C) 2021 Istituto Italiano di Tecnologia (IIT)
+ *
+ * This software may be modified and distributed under the terms of the
+ * GPL-2+ license. See the accompanying LICENSE file for details.
+ */
+ 
 #ifndef RENDERER_PLUGIN_HH
-#define  RENDERER_PLUGIN_HH
+#define RENDERER_PLUGIN_HH
 
-#include <cmath>
-
-#include <chrono>
-#include <cstdlib>
-#include <functional>
-
-#include <gazebo/common/common.hh>
 #include <gazebo/common/Plugin.hh>
-#include <gazebo/gazebo.hh>
-#include <gazebo/physics/physics.hh>
-#include <gazebo/physics/Model.hh>
-#include <gazebo/physics/Link.hh>
-#include <gazebo/physics/World.hh>
+
 #include "gazebo/sensors/sensors.hh"
-
-#include <ignition/math/Vector3.hh>
-
-#include <mutex>
-#include <opencv2/opencv.hpp>
 
 #include <pybind11/embed.h>
 #include <pybind11/stl.h>
 #include <pybind11/pybind11.h>
 #include <pybind11/numpy.h>
-#include <thread>
 
-#include <yarp/os/Bottle.h>
 #include <yarp/os/BufferedPort.h>
-#include <yarp/os/LogStream.h>
 #include <yarp/os/Network.h>
-#include <yarp/sig/all.h>
 #include <yarp/cv/Cv.h>
+
 using namespace std::chrono_literals;
+
+
 namespace gazebo
 {
     class RendererPlugin;
-
 }
 
 class gazebo::RendererPlugin : public ModelPlugin
@@ -51,7 +40,9 @@ class gazebo::RendererPlugin : public ModelPlugin
         void Load(physics::ModelPtr _model, sdf::ElementPtr _sdf);
 
         void UpdatePosition();
-        void CallTheRenderer();
+
+        void RenderingThread();
+
     private:
 
         /* Pointer to the models. */
@@ -77,6 +68,6 @@ class gazebo::RendererPlugin : public ModelPlugin
         ignition::math::Pose3d pose_sensor_;
 
         /* Semaphor that controls reading and writing of forces and pose. */
-        std::mutex semaphor_;
+        std::mutex mutex_;
 };
 #endif /* RENDERER_PLUGIN_HH */

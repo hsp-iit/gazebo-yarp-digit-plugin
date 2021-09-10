@@ -2,9 +2,11 @@
 <sdf version="1.4">
     <world name="default">
     <!-- The physics type can be chose bewteen ode, dart, bullet or fcl. We tested dart and ode.
-         The collision_detector with dart can be bullet, dart, fcl or ode -->
-        <physics type="ode">
-            <collision_detector>ode</collision_detector>
+         The collision_detector with dart can be bullet and fcl.
+         The use of ODE is not allowed because the ODE used by DART can clash with the ODE that ships with Gazebo. See https://github.com/dartsim/dart/issues/1425.
+         The use of dart is allowed just with very simple collision elements as sphere or boxes -->
+        <physics type="dart">
+            <collision_detector>fcl</collision_detector>
         </physics>
         <include>
             <uri>model://ground_plane</uri>

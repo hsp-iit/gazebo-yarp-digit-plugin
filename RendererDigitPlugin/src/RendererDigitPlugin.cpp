@@ -1,52 +1,51 @@
-#include "RendererDigitPlugin.hh"
+/*
+ * Copyright (C) 2021 Istituto Italiano di Tecnologia (IIT)
+ *
+ * This software may be modified and distributed under the terms of the
+ * GPL-2+ license. See the accompanying LICENSE file for details.
+ */
+
+ #include "RendererDigitPlugin.hh"
 
 using namespace pybind11::literals;
 GZ_REGISTER_MODEL_PLUGIN(gazebo::RendererPlugin)
 
 
 gazebo::RendererPlugin::RendererPlugin()
-{
-
-}
+{}
 
 gazebo::RendererPlugin::~RendererPlugin()
-{
+{}
 
-}
-
-void gazebo::RendererPlugin::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
+void gazebo::RendererPlugin::Load(physics::ModelPtr model, sdf::ElementPtr sdf)
 {
 
     /* Store the pointer of the sensor model. */
-    this->sensor_model_ = _model;
+    sensor_model_ = model;
 
     /* Store the pointer of the ball model. */
-    physics::WorldPtr world_ptr = this->sensor_model_->GetWorld();
-    this->ball_model_ = world_ptr->ModelByName("sphere");
+    physics::WorldPtr world_ptr = sensor_model_->GetWorld();
+    ball_model_ = world_ptr->ModelByName("sphere");
 
-    /* Call the thread. */
-    std::thread first(&gazebo::RendererPlugin::CallTheRenderer, this);
-
-    /* Do not wait for the thread. */
-    first.detach();
+    /* Initialize the rendering thread. */
+    std::thread rendering_thread(&gazebo::RendererPlugin::RenderingThread, this);
+    rendering_thread.detach();
 
     /* Get the link of the model. */
-    const gazebo::physics::Link_V link = this->sensor_model_->GetLinks();
-
-    /* Link_V to LinkPtr. */
+    const gazebo::physics::Link_V link = sensor_model_->GetLinks();
     const gazebo::physics::LinkPtr linkPtr = link[0];
 
     /* Get the sensor element from the SDF. */
-    this->sdf_ = (linkPtr->GetSDF())->GetElement("sensor");
+    sdf_ = (linkPtr->GetSDF())->GetElement("sensor");
 
     /* Store the pointer to the contact sensor. */
-    std::string localSensorName = this->sdf_->GetAttribute("name")->GetAsString();
+    std::string localSensorName = sdf_->GetAttribute("name")->GetAsString();
 
     /* Retrieve the scoped name of the sensor. */
-    std::vector<std::string> scopedNameList = this->sensor_model_->SensorScopedName(localSensorName);
+    std::vector<std::string> scopedNameList = sensor_model_->SensorScopedName(localSensorName);
 
     /* Istantiate the sensor manager. */
-    gazebo::sensors::SensorManager *sensorMgr = gazebo::sensors::SensorManager::Instance();
+    gazebo::sensors::SensorManager* sensorMgr = gazebo::sensors::SensorManager::Instance();
 
     /* Check if the queue of the SensorManager is empty. */
     if (!sensorMgr->SensorsInitialized())
@@ -56,27 +55,27 @@ void gazebo::RendererPlugin::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf
 
     /* Assign the sensor to the pointer. */
     gazebo::sensors::SensorPtr genericPtr = sensorMgr->GetSensor(scopedNameList[0]);
-    this->sensor_ = std::dynamic_pointer_cast<sensors::ContactSensor>(genericPtr);
+    sensor_ = std::dynamic_pointer_cast<sensors::ContactSensor>(genericPtr);
 
     /* Check the sensor. */
-    if (!this->sensor_)
+    if (!sensor_)
     {
       gzerr << "ContactSensorPlugin requires a ContactSensor .\n";
       return;
     }
 
     /* Activate the sensor .*/
-    this->sensor_->SetActive(true);
+    sensor_->SetActive(true);
 
     /*Update the posiiton by calling the UpdatePosition method. */
-    this->updateConnection_ = event::Events::ConnectWorldUpdateBegin(std::bind(&RendererPlugin::UpdatePosition, this));
-
-
+    updateConnection_ = event::Events::ConnectWorldUpdateBegin(std::bind(&RendererPlugin::UpdatePosition, this));
 }
-void gazebo::RendererPlugin::CallTheRenderer()
+
+void gazebo::RendererPlugin::RenderingThread()
 {
     /* Initialize the interpreter. */
     pybind11::scoped_interpreter guard;
+
     /**
      * Add the absolute path to the 'sensor' and 'tacto' python modules.
      * The definition 'SOURCE_PATH' is set in the CMakeLists.txt.
@@ -87,8 +86,6 @@ void gazebo::RendererPlugin::CallTheRenderer()
     pybind11::object sys_path_insert = pybind11::module::import("sys").attr("path").attr("insert");
     sys_path_insert(0, tacto_cpp_wrapper_path_ + "/python");
     sys_path_insert(0, tacto_path_);
-
-
 
     /**
      * Running the interpreter from here will cause sys.argv to be empty.
@@ -121,7 +118,6 @@ void gazebo::RendererPlugin::CallTheRenderer()
 
     /**
     * Get the pose of the ball.
-    * The function return the pose wrt the initial one, hence offset is needed.
     * At the moment, the object is fixed to the ground.
     */
     ignition::math::Pose3d pose_ball = ball_model_->GetLink()->WorldPose();
@@ -143,7 +139,7 @@ void gazebo::RendererPlugin::CallTheRenderer()
         "orientation"_a = orientation_object
     );
 
-    /* Initiliaze the vector and list for the sensor position computer by the main thread. */
+    /* Initiliaze the vector and list for the sensor position computed by the main thread. */
     std::vector<double> position_vector_sensor;
     pybind11::list position_sensor_thread;
 
@@ -157,7 +153,7 @@ void gazebo::RendererPlugin::CallTheRenderer()
     while(true)
     {
         /* Store the values computed by the principal thread inside the critical section. */
-        semaphor_.lock();
+        mutex_.lock();
 
         position_vector_sensor = {this->pose_sensor_.X(), this->pose_sensor_.Y(), this->pose_sensor_.Z()};
         position_sensor_thread = pybind11::cast(position_vector_sensor);
@@ -167,7 +163,7 @@ void gazebo::RendererPlugin::CallTheRenderer()
 
         /* Change the sign of the force since the renderer expects a positive force. */
         force=abs(this->forces_);
-        semaphor_.unlock();
+        mutex_.unlock();
 
         /* Call the renerer. */
         pybind11::array_t<uint8_t> rgb = sensor_digit.attr("render")\
@@ -181,13 +177,12 @@ void gazebo::RendererPlugin::CallTheRenderer()
         /* Convert the image. */
         img = cv::Mat(rgb.shape(0), rgb.shape(1), CV_8UC3, (unsigned char*)rgb.data());
 
-        /* Prepare the output and convert fromCVMat. */
+        /* Prepare the output and convert from OpenCV to YARP image. */
         yarp::sig::ImageOf<yarp::sig::PixelRgb>& output = port.prepare();
         output = yarp::cv::fromCvMat<yarp::sig::PixelRgb>(img);
 
         /* Write into the port. */
         port.write();
-
 
         std::this_thread::sleep_for(15ms);
     }
@@ -201,7 +196,7 @@ void gazebo::RendererPlugin::UpdatePosition()
 
     /* Initialize two variables keeping into account DART behaviour. */
     float force1 = 0;
-    float force2= 0;
+    float force2 = 0;
 
     for (unsigned int i = 0; i < contacts.contact_size(); ++i)
     {
@@ -214,11 +209,11 @@ void gazebo::RendererPlugin::UpdatePosition()
     }
 
     /* Adjourn position and forces inside the critical section. */
-    semaphor_.lock();
+    mutex_.lock();
 
     /**
-    * Choose the negative force to be taken, due to the behavior of DART.
-    * This if statement does not affect the other physics engine.
+    * DART might swap the assignment between force 1 / force 2 and the object of interest.
+    * See https://github.com/dartsim/dart/issues/1425
     **/
     if (force1 < force2 && force1 <0)
     {
@@ -228,14 +223,8 @@ void gazebo::RendererPlugin::UpdatePosition()
     {
         this->forces_ = force2;
     }
-    else
-    {
-        this->forces_ = 0;
-    }
 
     pose_sensor_ = this->sensor_model_->GetLink()->WorldPose();
 
-    semaphor_.unlock();
-
-
+    mutex_.unlock();
 }
