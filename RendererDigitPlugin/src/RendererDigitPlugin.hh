@@ -4,7 +4,7 @@
  * This software may be modified and distributed under the terms of the
  * GPL-2+ license. See the accompanying LICENSE file for details.
  */
- 
+
 #ifndef RENDERER_PLUGIN_HH
 #define RENDERER_PLUGIN_HH
 
@@ -66,6 +66,8 @@ class gazebo::RendererPlugin : public ModelPlugin
 
         /* Storage for the pose of the sensor. */
         ignition::math::Pose3d pose_sensor_;
+
+                std::ofstream ofile_x, ofile_y, ofile_z;
 
         /* Semaphor that controls reading and writing of forces and pose. */
         std::mutex mutex_;

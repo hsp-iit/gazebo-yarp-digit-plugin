@@ -64,6 +64,9 @@ void gazebo::RendererPlugin::Load(physics::ModelPtr model, sdf::ElementPtr sdf)
       return;
     }
 
+    ofile_x.open("numbers_force_x.txt");
+    ofile_y.open("numbers_force_y.txt");
+    ofile_z.open("numbers_force_z.txt");
     /* Activate the sensor .*/
     sensor_->SetActive(true);
 
@@ -195,34 +198,95 @@ void gazebo::RendererPlugin::UpdatePosition()
     contacts = this->sensor_->Contacts();
 
     /* Initialize two variables keeping into account DART behaviour. */
-    float force1 = 0;
-    float force2 = 0;
+   float force1 = 0;
+   float force2 = 0;
+   float force3 = 0;
+   float force4 = 0;
+   float force5 = 0;
+   float force6 = 0;
+   /* possimamo risolvere il problema calcolando ogni volta */
 
-    for (unsigned int i = 0; i < contacts.contact_size(); ++i)
-    {
-        for (unsigned int j = 0 ; j<contacts.contact(i).position_size(); ++j)
-        {
-            force1 +=  (float)contacts.contact(i).wrench(j).body_1_wrench().force().x();
-            force2 +=  (float)contacts.contact(i).wrench(j).body_2_wrench().force().x();
+   for (unsigned int i = 0; i < contacts.contact_size(); ++i)
+   {
+       std::cout<<" collision 1 : "<<contacts.contact(i).collision1()<<std::endl;
+       std::cout<<" collision 2 : "<<contacts.contact(i).collision2()<<std::endl;
 
-        }
-    }
 
-    /* Adjourn position and forces inside the critical section. */
-    mutex_.lock();
+       for (unsigned int j = 0 ; j<contacts.contact(i).position_size(); ++j)
+       {
+
+           force1 += (float)contacts.contact(i).wrench(j).body_1_wrench().force().x();
+           force2 += (float)contacts.contact(i).wrench(j).body_2_wrench().force().x();
+           force3 += (float)contacts.contact(i).wrench(j).body_1_wrench().force().y();
+           force4 += (float)contacts.contact(i).wrench(j).body_2_wrench().force().y();
+           force5 += (float)contacts.contact(i).wrench(j).body_1_wrench().force().z();
+           force6 += (float)contacts.contact(i).wrench(j).body_2_wrench().force().z();
+
+
+       }
+   }
+   ignition::math::Matrix3<double> sensor_transform (sensor_model_->GetLink()->WorldPose().Rot());
+   ignition::math::Matrix3<double> object_transform (ball_model_->GetLink()->WorldPose().Rot());
+
+
+   ignition::math::Vector3<double> Vector_sensor1 (sensor_transform*ignition::math::Vector3<double>(force1, force3, force5));
+   ignition::math::Vector3<double> Vector_sensor2 (sensor_transform*ignition::math::Vector3<double>(force2, force4, force6));
+   ignition::math::Vector3<double> Vector_object1 (object_transform*ignition::math::Vector3<double>(force1, force3, force5));
+   ignition::math::Vector3<double> Vector_object2 (object_transform*ignition::math::Vector3<double>(force2, force4, force6));
+
+   std::cout<< "prima sottrazione : x: "<< Vector_sensor1.X()+Vector_object2.X() <<std::endl;
+   std::cout<< "prima sottrazione : y: "<< Vector_sensor1.Y()+Vector_object2.Y() <<std::endl;
+   std::cout<< "prima sottrazione : z: "<< Vector_sensor1.Z()+Vector_object2.Z() <<std::endl;
+
+   std::cout<< "x body 1 : "<< Vector_object1.X()<< "; x body 2 : "<<Vector_sensor2.X()<< std::endl;
+   std::cout<< "seconda sottrazione : x: "<< Vector_sensor2.X()+Vector_object1.X() <<std::endl;
+   std::cout<< "seconda sottrazione : y: "<< Vector_sensor2.Y()+Vector_object1.Y() <<std::endl;
+   std::cout<< "seconda sottrazione : z: "<< Vector_sensor2.Z()+Vector_object1.Z() <<std::endl;
+   /* Adjourn position and forces inside the critical section. */
+   mutex_.lock();
+
+   if(contacts.contact_size() != 0)
+   {
+       if (abs(Vector_sensor2.X()+Vector_object1.X()) < abs(Vector_sensor1.X()+Vector_object2.X()))
+      {
+
+           ofile_x<< force2<< std::endl<<std::flush;
+
+
+           ofile_y<< force4<< std::endl<<std::flush;
+
+
+           ofile_z<< force6<< std::endl<<std::flush;
+           this->forces_= force2;
+       }
+       else
+       {
+           ofile_x<< force1<< std::endl<<std::flush;
+
+
+           ofile_y<< force3<< std::endl<<std::flush;
+
+
+           ofile_z<< force5<< std::endl<<std::flush;
+           this->forces_= force1;
+
+       }
+
+   }
+
 
     /**
     * DART might swap the assignment between force 1 / force 2 and the object of interest.
     * See https://github.com/dartsim/dart/issues/1425
     **/
-    if (force1 < force2 && force1 <0)
-    {
-        this->forces_ = force1;
-    }
-    else if (force2 < force1 && force2 <0)
-    {
-        this->forces_ = force2;
-    }
+    // if (force1 < force2 && force1 <0)
+    // {
+    //     this->forces_ = force1;
+    // }
+    // else if (force2 < force1 && force2 <0)
+    // {
+    //     this->forces_ = force2;
+    // }
 
     pose_sensor_ = this->sensor_model_->GetLink()->WorldPose();
 
