@@ -25,7 +25,7 @@ void gazebo::RendererPlugin::Load(physics::ModelPtr model, sdf::ElementPtr sdf)
 
     /* Store the pointer of the ball model. */
     physics::WorldPtr world_ptr = sensor_model_->GetWorld();
-    ball_model_ = world_ptr->ModelByName("sphere");
+    ball_model_ = world_ptr->ModelByName("mustard_bottle");
 
     /* Initialize the rendering thread. */
     std::thread rendering_thread(&gazebo::RendererPlugin::RenderingThread, this);
@@ -136,7 +136,7 @@ void gazebo::RendererPlugin::RenderingThread()
     /* Add the object to the scene. */
     pybind11::object add_object_ = sensor_digit.attr("add_object")
     (
-        "mesh"_a = tacto_cpp_wrapper_path_ + "/mesh/textured_sphere_smooth_meters.obj",
+        "mesh"_a = tacto_cpp_wrapper_path_ + "../../models/mustard_bottle/meshes/obj_000005.obj", //"/mesh/textured_sphere_smooth_meters.obj"
         "object_name"_a = ball_,
         "position"_a = position_object,
         "orientation"_a = orientation_object
@@ -208,8 +208,8 @@ void gazebo::RendererPlugin::UpdatePosition()
 
    for (unsigned int i = 0; i < contacts.contact_size(); ++i)
    {
-       std::cout<<" collision 1 : "<<contacts.contact(i).collision1()<<std::endl;
-       std::cout<<" collision 2 : "<<contacts.contact(i).collision2()<<std::endl;
+       // std::cout<<" collision 1 : "<<contacts.contact(i).collision1()<<std::endl;
+       // std::cout<<" collision 2 : "<<contacts.contact(i).collision2()<<std::endl;
 
 
        for (unsigned int j = 0 ; j<contacts.contact(i).position_size(); ++j)
@@ -234,14 +234,14 @@ void gazebo::RendererPlugin::UpdatePosition()
    ignition::math::Vector3<double> Vector_object1 (object_transform*ignition::math::Vector3<double>(force1, force3, force5));
    ignition::math::Vector3<double> Vector_object2 (object_transform*ignition::math::Vector3<double>(force2, force4, force6));
 
-   std::cout<< "prima sottrazione : x: "<< Vector_sensor1.X()+Vector_object2.X() <<std::endl;
-   std::cout<< "prima sottrazione : y: "<< Vector_sensor1.Y()+Vector_object2.Y() <<std::endl;
-   std::cout<< "prima sottrazione : z: "<< Vector_sensor1.Z()+Vector_object2.Z() <<std::endl;
-
-   std::cout<< "x body 1 : "<< Vector_object1.X()<< "; x body 2 : "<<Vector_sensor2.X()<< std::endl;
-   std::cout<< "seconda sottrazione : x: "<< Vector_sensor2.X()+Vector_object1.X() <<std::endl;
-   std::cout<< "seconda sottrazione : y: "<< Vector_sensor2.Y()+Vector_object1.Y() <<std::endl;
-   std::cout<< "seconda sottrazione : z: "<< Vector_sensor2.Z()+Vector_object1.Z() <<std::endl;
+   // std::cout<< "prima sottrazione : x: "<< Vector_sensor1.X()+Vector_object2.X() <<std::endl;
+   // std::cout<< "prima sottrazione : y: "<< Vector_sensor1.Y()+Vector_object2.Y() <<std::endl;
+   // std::cout<< "prima sottrazione : z: "<< Vector_sensor1.Z()+Vector_object2.Z() <<std::endl;
+   //
+   // std::cout<< "x body 1 : "<< Vector_object1.X()<< "; x body 2 : "<<Vector_sensor2.X()<< std::endl;
+   // std::cout<< "seconda sottrazione : x: "<< Vector_sensor2.X()+Vector_object1.X() <<std::endl;
+   // std::cout<< "seconda sottrazione : y: "<< Vector_sensor2.Y()+Vector_object1.Y() <<std::endl;
+   // std::cout<< "seconda sottrazione : z: "<< Vector_sensor2.Z()+Vector_object1.Z() <<std::endl;
    /* Adjourn position and forces inside the critical section. */
    mutex_.lock();
 
@@ -250,24 +250,24 @@ void gazebo::RendererPlugin::UpdatePosition()
        if (abs(Vector_sensor2.X()+Vector_object1.X()) < abs(Vector_sensor1.X()+Vector_object2.X()))
       {
 
-           ofile_x<< force2<< std::endl<<std::flush;
+           ofile_x<< abs(force2)<< std::endl<<std::flush;
 
 
-           ofile_y<< force4<< std::endl<<std::flush;
+           ofile_y<< abs(force4)<< std::endl<<std::flush;
 
 
-           ofile_z<< force6<< std::endl<<std::flush;
+           ofile_z<< abs(force6)<< std::endl<<std::flush;
            this->forces_= force2;
        }
        else
        {
-           ofile_x<< force1<< std::endl<<std::flush;
+           ofile_x<< abs(force1)<< std::endl<<std::flush;
 
 
-           ofile_y<< force3<< std::endl<<std::flush;
+           ofile_y<< abs(force3)<< std::endl<<std::flush;
 
 
-           ofile_z<< force5<< std::endl<<std::flush;
+           ofile_z<< abs(force5)<< std::endl<<std::flush;
            this->forces_= force1;
 
        }

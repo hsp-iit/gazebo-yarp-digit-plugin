@@ -6,7 +6,7 @@
          The use of ODE is not allowed because the ODE used by DART can clash with the ODE that ships with Gazebo. See https://github.com/dartsim/dart/issues/1425.
          The use of dart is allowed just with very simple collision elements as sphere or boxes -->
         <physics type="dart">
-            <collision_detector>fcl</collision_detector>
+            <!-- <collision_detector>dart</collision_detector> -->
         </physics>
         <include>
             <uri>model://ground_plane</uri>
@@ -20,7 +20,14 @@
             <uri>model://digit</uri>
         </include>
 
-        <model name="sphere">
+        <include>
+            <uri>model://mustard_bottle</uri>
+            <pose> 0.1 0.0 0 0 0 -0.5</pose>
+
+        </include>
+
+
+        <!-- <model name="sphere">
             <link name="link">
                 <mass>1</mass>
                 <inertia>
@@ -35,8 +42,11 @@
                 <collision name="sphere_collision">
                     <geometry>
                         <sphere>
-                            <radius>0.009</radius>
+                            <radius> 0.009 </radius>
                         </sphere>
+                    <mesh>
+                        <uri>./../tacto-cpp-wrapper/mesh/textured_sphere_smooth_meters.obj</uri>
+                    </mesh>
                     </geometry>
                 </collision>
 
@@ -53,6 +63,6 @@
                 <parent> world</parent>
                 <child> link</child>
             </joint>
-        </model>
+        </model> -->
     </world>
 </sdf>

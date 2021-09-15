@@ -40,6 +40,11 @@
                     </cylinder>
                 </geometry>
             </collision>
+            <!-- <collision name = "digit_collision">
+                <geometry>
+                    <mesh><uri>./digit.STL</uri></mesh>
+                </geometry>
+            </collision> -->
             <visual name="visual">
                 <geometry>
                     <mesh><uri>./digit.STL</uri></mesh>
