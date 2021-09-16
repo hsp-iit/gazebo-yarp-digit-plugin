@@ -30,15 +30,15 @@ class gazebo::ControlPlugin : public ModelPlugin
 
     private:
 
+        /* Methods to compute the ideal position and velocity of the trajectory. */
+        double ComputePosition(double starting_coordinate, double final_coordinate);
+        double ComputeVelocity(double starting_coordinate, double final_coordinate, double elapsed);
+
         /* Pointer to the model. */
         physics::ModelPtr model_;
 
         /* Pointer to the connection. */
         event::ConnectionPtr updateConnection_;
-
-        double ComputePosition(double starting_coordinate, double final_coordinate);
-
-        double ComputeVelocity(double starting_coordinate, double final_coordinate, double elapsed);
 
         /* Time and position variable to control the sinusoidal movement of the senso. */
         double time_ = 0;

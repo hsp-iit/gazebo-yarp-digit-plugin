@@ -67,8 +67,6 @@ class gazebo::RendererPlugin : public ModelPlugin
         /* Storage for the pose of the sensor. */
         ignition::math::Pose3d pose_sensor_;
 
-                std::ofstream ofile_x, ofile_y, ofile_z;
-
         /* Semaphor that controls reading and writing of forces and pose. */
         std::mutex mutex_;
 };

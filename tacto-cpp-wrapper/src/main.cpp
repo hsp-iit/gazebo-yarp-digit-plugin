@@ -90,7 +90,7 @@ int main(int argc, char** argv)
     /* Initialize YARP port. */
     Network yarp;
     BufferedPort<ImageOf<PixelRgb>> port;
-    port.open("/gazebo-yarp-digit-plugin/output:o");
+    port.open("/gazebo-yarp-digit-plugin-old/output:o");
 
     /* Initialize the output image. */
     cv::Mat img;

@@ -3,8 +3,8 @@
     <world name="default">
     <!-- The physics type can be chose bewteen ode, dart, bullet or fcl. We tested dart and ode.
          The collision_detector with dart can be bullet and fcl.
-         The use of ODE is not allowed because the ODE used by DART can clash with the ODE that ships with Gazebo. See https://github.com/dartsim/dart/issues/1425.
-         The use of dart is allowed just with very simple collision elements as sphere or boxes -->
+         The use of ODE as collision detector is not allowed because the ODE used by DART can clash with the ODE that ships with Gazebo. See https://github.com/dartsim/dart/issues/1425.
+         The use of dart as collision detector is allowed just with very simple collision elements as sphere or boxes -->
         <physics type="dart">
             <!-- <collision_detector>dart</collision_detector> -->
         </physics>
@@ -20,14 +20,7 @@
             <uri>model://digit</uri>
         </include>
 
-        <include>
-            <uri>model://mustard_bottle</uri>
-            <pose> 0.1 0.0 0 0 0 -0.5</pose>
-
-        </include>
-
-
-        <!-- <model name="sphere">
+        <model name="sphere">
             <link name="link">
                 <mass>1</mass>
                 <inertia>
@@ -63,6 +56,6 @@
                 <parent> world</parent>
                 <child> link</child>
             </joint>
-        </model> -->
+        </model>
     </world>
 </sdf>

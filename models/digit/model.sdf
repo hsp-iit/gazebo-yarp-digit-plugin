@@ -17,34 +17,11 @@
                     <izz>1</izz>
                 </inertia>
             </inertial>
-            <collision name="digit_collision_gel">
-                <pose>0.0006 0 0 0 0 0</pose>
-                <geometry>
-                    <mesh><uri>./gel.stl</uri></mesh>
-                </geometry>
-            </collision>
-            <collision name="digit_collision_body_box">
-                <pose>0.002 0 0.013 0 0 0</pose>
-                <geometry>
-                    <box>
-                        <size>0.027 0.026 0.024</size>
-                    </box>
-                </geometry>
-            </collision>
-            <collision name="digit_collision_body_cylinder">
-                <pose>0.002 0 0.02 0 1.6 0</pose>
-                <geometry>
-                    <cylinder>
-                        <radius>0.014</radius>
-                        <length>0.025</length>
-                    </cylinder>
-                </geometry>
-            </collision>
-            <!-- <collision name = "digit_collision">
+            <collision name = "digit_collision">
                 <geometry>
                     <mesh><uri>./digit.STL</uri></mesh>
                 </geometry>
-            </collision> -->
+            </collision>
             <visual name="visual">
                 <geometry>
                     <mesh><uri>./digit.STL</uri></mesh>
@@ -52,7 +29,7 @@
             </visual>
             <sensor name='contact_digit' type='contact'>
                 <contact>
-                    <collision>digit_collision_gel</collision>
+                    <collision>digit_collision</collision>
                 </contact>
                 <update_rate> 30 </update_rate>
             </sensor>
