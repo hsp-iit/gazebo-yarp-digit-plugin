@@ -1,8 +1,9 @@
-#include <cstdlib>
-#include <chrono>
-#include <cmath>
-#include <iostream>
-#include <thread>
+/*
+ * Copyright (C) 2021 Istituto Italiano di Tecnologia (IIT)
+ *
+ * This software may be modified and distributed under the terms of the
+ * GPL-2+ license. See the accompanying LICENSE file for details.
+ */
 
 #include <opencv2/opencv.hpp>
 
@@ -11,11 +12,10 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/numpy.h>
 
-#include <yarp/os/Bottle.h>
+#include <thread>
+
 #include <yarp/os/BufferedPort.h>
-#include <yarp/os/LogStream.h>
 #include <yarp/os/Network.h>
-#include <yarp/sig/all.h>
 #include <yarp/cv/Cv.h>
 
 namespace py = pybind11;
@@ -90,7 +90,7 @@ int main(int argc, char** argv)
     /* Initialize YARP port. */
     Network yarp;
     BufferedPort<ImageOf<PixelRgb>> port;
-    port.open("/gazebo-yarp-digit-plugin-old/output:o");
+    port.open("/gazebo-yarp-digit-plugin/output:o");
 
     /* Initialize the output image. */
     cv::Mat img;

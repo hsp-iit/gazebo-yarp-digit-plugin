@@ -5,7 +5,7 @@
  * GPL-2+ license. See the accompanying LICENSE file for details.
  */
 
- #include "RendererDigitPlugin.hh"
+ #include "RendererDigitPlugin.h"
 
 using namespace pybind11::literals;
 GZ_REGISTER_MODEL_PLUGIN(gazebo::RendererPlugin)
@@ -196,23 +196,23 @@ void gazebo::RendererPlugin::UpdatePosition()
     contacts = sensor_->Contacts();
 
     /* Initialize forces variables keeping into account DART behaviour. */
-   float force1 = 0;
-   float force2 = 0;
-   float force3 = 0;
-   float force4 = 0;
-   float force5 = 0;
-   float force6 = 0;
+   float force_x_body_1 = 0;
+   float force_x_body_2 = 0;
+   float force_y_body_1 = 0;
+   float force_y_body_2 = 0;
+   float force_z_body_1 = 0;
+   float force_z_body_2 = 0;
 
    for (unsigned int i = 0; i < contacts.contact_size(); ++i)
    {
        for (unsigned int j = 0 ; j<contacts.contact(i).position_size(); ++j)
        {
-           force1 += (float)contacts.contact(i).wrench(j).body_1_wrench().force().x();
-           force2 += (float)contacts.contact(i).wrench(j).body_2_wrench().force().x();
-           force3 += (float)contacts.contact(i).wrench(j).body_1_wrench().force().y();
-           force4 += (float)contacts.contact(i).wrench(j).body_2_wrench().force().y();
-           force5 += (float)contacts.contact(i).wrench(j).body_1_wrench().force().z();
-           force6 += (float)contacts.contact(i).wrench(j).body_2_wrench().force().z();
+           force_x_body_1 += (float)contacts.contact(i).wrench(j).body_1_wrench().force().x();
+           force_x_body_2 += (float)contacts.contact(i).wrench(j).body_2_wrench().force().x();
+           force_y_body_1 += (float)contacts.contact(i).wrench(j).body_1_wrench().force().y();
+           force_y_body_2 += (float)contacts.contact(i).wrench(j).body_2_wrench().force().y();
+           force_z_body_1 += (float)contacts.contact(i).wrench(j).body_1_wrench().force().z();
+           force_z_body_2 += (float)contacts.contact(i).wrench(j).body_2_wrench().force().z();
        }
    }
 
@@ -221,10 +221,10 @@ void gazebo::RendererPlugin::UpdatePosition()
    ignition::math::Matrix3<double> object_transform (ball_model_->GetLink()->WorldPose().Rot());
 
    /* Move to world coordinate. */
-   ignition::math::Vector3<double> Vector_sensor1 (sensor_transform*ignition::math::Vector3<double>(force1, force3, force5));
-   ignition::math::Vector3<double> Vector_sensor2 (sensor_transform*ignition::math::Vector3<double>(force2, force4, force6));
-   ignition::math::Vector3<double> Vector_object1 (object_transform*ignition::math::Vector3<double>(force1, force3, force5));
-   ignition::math::Vector3<double> Vector_object2 (object_transform*ignition::math::Vector3<double>(force2, force4, force6));
+   ignition::math::Vector3<double> Vector_sensor1 (sensor_transform*ignition::math::Vector3<double>(force_x_body_1, force_y_body_1, force_z_body_1));
+   ignition::math::Vector3<double> Vector_sensor2 (sensor_transform*ignition::math::Vector3<double>(force_x_body_2, force_y_body_2, force_z_body_2));
+   ignition::math::Vector3<double> Vector_object1 (object_transform*ignition::math::Vector3<double>(force_x_body_1, force_y_body_1, force_z_body_1));
+   ignition::math::Vector3<double> Vector_object2 (object_transform*ignition::math::Vector3<double>(force_x_body_2, force_y_body_2, force_z_body_2));
 
    mutex_.lock();
 
@@ -232,19 +232,22 @@ void gazebo::RendererPlugin::UpdatePosition()
     * DART might swap the assignment between body 1 / body 2.
     * See https://github.com/dartsim/dart/issues/1425
     **/
-    forces_ = 0;
+
     /* Check if we are in contact. */
     if(contacts.contact_size() != 0)
     {
         if (abs(Vector_sensor2.X()+Vector_object1.X()) < abs(Vector_sensor1.X()+Vector_object2.X()))
         {
-            forces_= force2;
+            forces_= force_x_body_2;
         }
         else
         {
-            forces_= force1;
+            forces_= force_x_body_1;
         }
-
+    }
+    else
+    {
+        forces_ = 0;
     }
 
     pose_sensor_ = sensor_model_->GetLink()->WorldPose();

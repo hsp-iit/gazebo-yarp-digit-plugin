@@ -9,7 +9,6 @@
 #define RENDERER_PLUGIN_HH
 
 #include <gazebo/common/Plugin.hh>
-
 #include "gazebo/sensors/sensors.hh"
 
 #include <pybind11/embed.h>
@@ -22,7 +21,6 @@
 #include <yarp/cv/Cv.h>
 
 using namespace std::chrono_literals;
-
 
 namespace gazebo
 {

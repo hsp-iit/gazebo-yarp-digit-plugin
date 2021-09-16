@@ -5,7 +5,7 @@
  * GPL-2+ license. See the accompanying LICENSE file for details.
  */
 
-#include "ControlDigitPlugin.hh"
+#include "ControlDigitPlugin.h"
 
 using namespace gazebo;
 GZ_REGISTER_MODEL_PLUGIN(ControlPlugin)
@@ -25,8 +25,6 @@ void ControlPlugin::Load(physics::ModelPtr model, sdf::ElementPtr sdf)
 
     /*Update the posiiton by calling the UpdatePosition method. */
 	updateConnection_ = event::Events::ConnectWorldUpdateBegin(std::bind(&ControlPlugin::UpdatePosition, this));
-
-
 }
 
 void ControlPlugin::UpdatePosition()
