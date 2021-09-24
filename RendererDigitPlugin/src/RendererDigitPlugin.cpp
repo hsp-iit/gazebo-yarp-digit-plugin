@@ -26,7 +26,7 @@ void gazebo::RendererPlugin::Load(physics::ModelPtr model, sdf::ElementPtr sdf)
     /* Store the pointer of the ball model. */
     physics::WorldPtr world_ptr = sensor_model_->GetWorld();
     ball_model_ = world_ptr->ModelByName("sphere");
-
+    
     /* Initialize the rendering thread. */
     std::thread rendering_thread(&gazebo::RendererPlugin::RenderingThread, this);
     rendering_thread.detach();
