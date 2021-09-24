@@ -5,8 +5,8 @@
  * GPL-2+ license. See the accompanying LICENSE file for details.
  */
 
-#ifndef CONTROL_DIGIT_PLUGIN_HH
-#define CONTROL_DIGIT_PLUGIN_HH
+#ifndef CONTROL_DIGIT_PLUGIN_H
+#define CONTROL_DIGIT_PLUGIN_H
 
 #include <gazebo/gazebo.hh>
 #include <gazebo/physics/physics.hh>
@@ -53,4 +53,4 @@ class gazebo::ControlPlugin : public ModelPlugin
 
         ignition::math::Pose3<double> starting_pose_;
 };
-#endif /* CONTROL_DIGIT_PLUGIN_HH */
+#endif /* CONTROL_DIGIT_PLUGIN_H */
