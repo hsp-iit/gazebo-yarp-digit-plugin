@@ -5,20 +5,20 @@
  * GPL-2+ license. See the accompanying LICENSE file for details.
  */
 
-#ifndef RENDERER_PLUGIN_HH
-#define RENDERER_PLUGIN_HH
+#ifndef RENDERER_PLUGIN_H
+#define RENDERER_PLUGIN_H
 
 #include <gazebo/common/Plugin.hh>
 #include "gazebo/sensors/sensors.hh"
 
 #include <pybind11/embed.h>
-#include <pybind11/stl.h>
-#include <pybind11/pybind11.h>
 #include <pybind11/numpy.h>
+#include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
 
+#include <yarp/cv/Cv.h>
 #include <yarp/os/BufferedPort.h>
 #include <yarp/os/Network.h>
-#include <yarp/cv/Cv.h>
 
 using namespace std::chrono_literals;
 
@@ -68,4 +68,4 @@ class gazebo::RendererPlugin : public ModelPlugin
         /* Semaphor that controls reading and writing of forces and pose. */
         std::mutex mutex_;
 };
-#endif /* RENDERER_PLUGIN_HH */
+#endif /* RENDERER_PLUGIN_H */
