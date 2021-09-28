@@ -2,8 +2,8 @@ import cv2
 import numpy as np
 import os
 import trimesh
-from tacto import Renderer
 import sys
+from tacto import Renderer
 
 
 class Sensor:
@@ -23,7 +23,6 @@ class Sensor:
         # Camera parameters
         self.width = 240
         self.height = 320
-
         # Instantiate the renderer
         self.renderer = Renderer(self.width, self.height, bg, configuration_path)
 
@@ -59,8 +58,7 @@ class Sensor:
 
         self.object_force[self.object_name] = force
 
-        if self.object_force[self.object_name] > 0.0:
-
+        if self.object_force[self.object_name] > 0:
             # Update camera pose
             self.renderer.update_camera_pose(sensor_position, sensor_orientation)
 
@@ -72,11 +70,12 @@ class Sensor:
             # This function return RGB and depth matrices
             rgb, _ = self.renderer.render(self.object_pose, self.object_force)
 
+
         else:
+
             if self.static_rgb is None:
 
-                sel.static_rgb, _ = self.renderer.render(noise = False)
-
+                self.static_rgb, _ = self.renderer.render(noise = False)
 
             rgb = [self.renderer._add_noise(color) for color in self.static_rgb]
 
