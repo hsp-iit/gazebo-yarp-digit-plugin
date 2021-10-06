@@ -16,6 +16,8 @@ FetchContent_MakeAvailable(tacto)
 
 add_subdirectory(tacto-cpp-wrapper)
 add_subdirectory(ControlDigitPlugin)
+add_subdirectory(ControlHandPlugin)
 add_subdirectory(RendererDigitPlugin)
 add_subdirectory(models)
 add_subdirectory(worlds)
+add_subdirectory(GraspExample)

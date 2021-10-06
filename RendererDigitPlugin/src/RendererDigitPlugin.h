@@ -12,13 +12,13 @@
 #include "gazebo/sensors/sensors.hh"
 
 #include <pybind11/embed.h>
-#include <pybind11/numpy.h>
-#include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
+#include <pybind11/pybind11.h>
+#include <pybind11/numpy.h>
 
-#include <yarp/cv/Cv.h>
 #include <yarp/os/BufferedPort.h>
 #include <yarp/os/Network.h>
+#include <yarp/cv/Cv.h>
 
 using namespace std::chrono_literals;
 
@@ -26,6 +26,7 @@ namespace gazebo
 {
     class RendererPlugin;
 }
+
 
 class gazebo::RendererPlugin : public ModelPlugin
 {
@@ -35,37 +36,44 @@ class gazebo::RendererPlugin : public ModelPlugin
 
         ~RendererPlugin();
 
-        void Load(physics::ModelPtr _model, sdf::ElementPtr _sdf);
+        void Load(physics::ModelPtr model, sdf::ElementPtr sdf);
 
-        void UpdatePosition();
+        void UpdateStates();
 
         void RenderingThread();
 
     private:
 
+        template<class T>
+        bool LoadParameterFromSDF(sdf::ElementPtr sdf, const std::string &name, T& value);
+
+        /* Method and its output varibale to compute forces. */
+        std::unordered_map<std::string, float> ComputeForces();
+
         /* Pointer to the models. */
         physics::ModelPtr sensor_model_;
-        physics::ModelPtr ball_model_;
-
-        /* Pointer to the world. */
-        physics::WorldPtr world_ptr;
+        physics::ModelPtr object_model_;
 
         /* Pointer to the connection. */
         event::ConnectionPtr updateConnection_;
 
-        /* Pointer to the SDF value. */
-        sdf::ElementPtr sdf_;
-
         /* Pointer to the sensor. */
-        gazebo::sensors::ContactSensorPtr sensor_;
+        std::unordered_map<std::string, gazebo::sensors::ContactSensorPtr> sensors_;
 
         /* Storage for the forces. */
-        float forces_;
+        std::unordered_map<std::string, float> forces_;
 
-        /* Storage for the pose of the sensor. */
-        ignition::math::Pose3d pose_sensor_;
+        /* Storage for the pose of the sensor and the object. */
+        std::unordered_map<std::string, ignition::math::Pose3d> pose_sensors_;
+        ignition::math::Pose3d pose_object_;
 
         /* Semaphor that controls reading and writing of forces and pose. */
         std::mutex mutex_;
+
+        std::vector<std::string> sensors_link_name_;
+
+        double update_period_;
+
+        std::string object_mesh_absolute_path_, object_name_;
 };
 #endif /* RENDERER_PLUGIN_H */

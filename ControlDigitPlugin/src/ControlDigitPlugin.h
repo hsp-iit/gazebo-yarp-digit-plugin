@@ -13,22 +13,26 @@
 
 namespace gazebo
 {
-    class ControlPlugin;
+    class ControlDigitPlugin;
 }
 
-class gazebo::ControlPlugin : public ModelPlugin
+
+class gazebo::ControlDigitPlugin : public ModelPlugin
 {
     public:
 
-        ControlPlugin();
+        ControlDigitPlugin();
 
-        ~ControlPlugin();
+        ~ControlDigitPlugin();
 
         void Load(physics::ModelPtr model, sdf::ElementPtr sdf);
 
         void UpdatePosition();
 
     private:
+
+        template<class T>
+        bool LoadParameterFromSDF(sdf::ElementPtr sdf, const std::string &name, T& value);
 
         /* Methods to compute the ideal position and velocity of the trajectory. */
         double ComputePosition(double starting_coordinate, double final_coordinate);
@@ -40,7 +44,7 @@ class gazebo::ControlPlugin : public ModelPlugin
         /* Pointer to the connection. */
         event::ConnectionPtr updateConnection_;
 
-        /* Time and position variable to control the sinusoidal movement of the senso. */
+        /* Time and position variable to control the sinusoidal movement of the sensor. */
         double time_ = 0;
         double position_ = 0;
 
@@ -50,6 +54,8 @@ class gazebo::ControlPlugin : public ModelPlugin
         /* Store for the time. */
         std::chrono::time_point<std::chrono::steady_clock> last_time_ ;
 
+        /* Gain of the controller. */
+        double p_gain_;
 
         ignition::math::Pose3<double> starting_pose_;
 };

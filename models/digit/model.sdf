@@ -3,10 +3,10 @@
     <model name= "digit">
         <static>false</static>
         <link name= "base">
-            <gravity>0</gravity> <!-- Gravity set to 0 -->
-            <pose>0 0 0.0248 0 0 0</pose> <!-- Z axis fixed at 0.0048 to avoid contact with the ground. -->
+            <gravity>0</gravity>
+            <pose>0 0 0.0248 0 0 0</pose>
             <inertial>
-                <pose>0 0 0.015  0 0 0</pose> <!-- Center of mass moved along the Z axis near the camera to prevent the sensor to rotate after contact. -->
+                <pose>0 0 0.015  0 0 0</pose> <!-- Center of mass moved towards the centre. -->
                 <mass>.1</mass>
                 <inertia>
                     <ixx>1</ixx>
@@ -17,12 +17,13 @@
                     <izz>1</izz>
                 </inertia>
             </inertial>
-            <collision name = "digit_collision">
+            <collision name="digit_collision">
+                <pose>0 0 0 0 0 0</pose>
                 <geometry>
                     <mesh><uri>./digit.STL</uri></mesh>
                 </geometry>
-            </collision>
-            <visual name="visual">
+             </collision>
+             <visual name="visual">
                 <geometry>
                     <mesh><uri>./digit.STL</uri></mesh>
                 </geometry>
@@ -34,7 +35,16 @@
                 <update_rate> 30 </update_rate>
             </sensor>
         </link>
-        <plugin name="RendererDigitPlugin" filename="libRendererDigitPlugin.so"/>
-        <plugin name="ControlDigitPlugin" filename="libControlDigitPlugin.so"/>
+        <plugin name="RendererDigitPlugin" filename="libRendererDigitPlugin.so">
+            <ObjectName>sphere</ObjectName>
+            <ObjectMeshAbsolutePath>/home/gabriele/Desktop/gabriele/Gabriele/gazebo-yarp-digit-plugin/models/sphere_digit/mesh/textured_sphere_smooth_meters.obj</ObjectMeshAbsolutePath>
+            <NumberOfSensors>1</NumberOfSensors>
+            <LinkName1>base</LinkName1>
+            <SensorName1>contact_digit</SensorName1>
+            <UpdatePeriod>0.001</UpdatePeriod>
+        </plugin>
+        <plugin name="ControlDigitPlugin" filename="libControlDigitPlugin.so">
+            <Gain>10</Gain>
+        </plugin>
     </model>
 </sdf>
