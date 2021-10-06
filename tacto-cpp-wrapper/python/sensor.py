@@ -58,6 +58,10 @@ class Sensor:
 
         self.object_force[self.object_name] = force
 
+        #print(object_position)
+        #print(sensor_orientation)
+        #print(force)
+        #print(sensor_position)
         if self.object_force[self.object_name] > 0:
             # Update camera pose
             self.renderer.update_camera_pose(sensor_position, sensor_orientation)
