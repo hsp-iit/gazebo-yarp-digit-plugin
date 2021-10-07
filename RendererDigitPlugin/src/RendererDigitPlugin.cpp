@@ -178,8 +178,8 @@ void gazebo::RendererPlugin::Load(physics::ModelPtr model, sdf::ElementPtr sdf)
     }
 
     /* Initialize the rendering thread. */
-    std::thread first(&gazebo::RendererPlugin::RenderingThread, this);
-    first.detach();
+    std::thread rendering_thread(&gazebo::RendererPlugin::RenderingThread, this);
+    rendering_thread.detach();
 
     /* Update the positon by calling the UpdateStates method. */
     updateConnection_ = event::Events::ConnectWorldUpdateBegin(std::bind(&RendererPlugin::UpdateStates, this));
