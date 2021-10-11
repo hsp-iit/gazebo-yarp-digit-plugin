@@ -13,7 +13,7 @@ set(TARGET_NAME set-new-pose)
 
 find_package(gazebo REQUIRED)
 
-find_package(YARP REQUIRED COMPONENTS sig)
+find_package(YARP REQUIRED COMPONENTS sig os)
 
 list(APPEND CMAKE_CXX_FLAGS "${GAZEBO_CXX_FLAGS}")
 
@@ -30,4 +30,4 @@ add_library(ControlHandPlugin SHARED src/ControlHandPlugin.cpp  ${${TARGET_NAME}
 
 target_include_directories(ControlHandPlugin PRIVATE ${GAZEBO_INCLUDE_DIRS})
 
-target_link_libraries(ControlHandPlugin PRIVATE YARP::YARP_sig ${GAZEBO_LIBRARIES})
+target_link_libraries(ControlHandPlugin PRIVATE YARP::YARP_sig YARP::YARP_os ${GAZEBO_LIBRARIES})

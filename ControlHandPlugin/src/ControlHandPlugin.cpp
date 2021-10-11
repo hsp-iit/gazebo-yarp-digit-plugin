@@ -7,6 +7,7 @@
 
 #include "ControlHandPlugin.h"
 #include <yarp/os/LogStream.h>
+#include <yarp/os/Network.h>
 
 GZ_REGISTER_MODEL_PLUGIN(gazebo::ControlHandPlugin)
 
@@ -100,6 +101,10 @@ void gazebo::ControlHandPlugin::Load(physics::ModelPtr model, sdf::ElementPtr sd
 
     /* Update the posiiton by calling the UpdatePosition method. */
     updateConnection_ = event::Events::ConnectWorldUpdateBegin(std::bind(&gazebo::ControlHandPlugin::UpdateControl, this));
+
+    /* Open the output port to send out the position of the object. */
+    yarp::os::Network yarp;
+    port_pose_.open("/pose-object/output:o");
 }
 
 
@@ -271,6 +276,12 @@ void gazebo::ControlHandPlugin::UpdateControl()
 
     is_motion_done_ = trajectory_generator_->UpdatePose(std::chrono::steady_clock::now());
 
+    /* Handle the flags to send the position of the object controlled. */
+    if (!is_motion_done_ && new_pose_sent_)
+        new_pose_sent_ = false;
+    if (is_motion_done_ && !new_pose_sent_)
+        send_new_pose_ = true;
+
     mutex_.unlock();
 
     /* Get the desired pose. */
@@ -303,6 +314,31 @@ void gazebo::ControlHandPlugin::UpdateControl()
 
     /* Apply the torque to the body. */
     hand_model_->GetLink("SIM_LEFT_HAND::l_hand_palm_link")->SetTorque(p_gain_ * axis + 2 * std::sqrt(p_gain_) * (0 - velocity_vector_angular));
+
+    /* Decide whether to send a new pose or not. */
+    if (send_new_pose_ && !new_pose_sent_)
+    {
+        new_pose_sent_ = true;
+        send_new_pose_ = false;
+
+        ignition::math::Quaternion<double> orientation_object(pose.Rot());
+        ignition::math::Vector3<double> actual_axis;
+        double actual_angle;
+        orientation_object.ToAxis(actual_axis, actual_angle);
+
+        yarp::os::Bottle & actual_pose = port_pose_.prepare();
+
+        actual_pose.clear();
+        actual_pose.addDouble(pose.X());
+        actual_pose.addDouble(pose.Y());
+        actual_pose.addDouble(pose.Z());
+        actual_pose.addDouble(actual_axis[0]);
+        actual_pose.addDouble(actual_axis[1]);
+        actual_pose.addDouble(actual_axis[2]);
+        actual_pose.addDouble(actual_angle);
+
+        port_pose_.write();
+    }
 }
 
 

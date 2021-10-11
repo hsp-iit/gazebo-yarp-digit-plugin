@@ -84,5 +84,9 @@ class gazebo::ControlHandPlugin : public ModelPlugin,
         double p_gain_;
 
         std::mutex mutex_;
+
+        bool send_new_pose_ = false, new_pose_sent_ = false;
+
+        yarp::os::BufferedPort<yarp::os::Bottle> port_pose_;
 };
 #endif /* CONTROL_HAND_PLUGIN_H */
