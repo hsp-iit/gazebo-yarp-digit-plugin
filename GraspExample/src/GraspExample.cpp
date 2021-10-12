@@ -45,7 +45,7 @@ bool GraspExample::configure(yarp::os::ResourceFinder &rf)
     }
 
     /* Connect the client with the plugin's server. */
-    yarp::os::Network::connect("/grasp-example/rpc:o", "/control-hand-port/rpc:i");
+    yarp::os::Network::connect("/grasp-example/rpc:o", "/control-object-port/rpc:i");
 
     /* Set the initial state. */
     GraspExample::SetState(State::Idle);
@@ -135,7 +135,7 @@ bool GraspExample::updateModule()
             /* Send the message to the plugin. */
             mutex_bottle_.lock();
 
-            if(!(port_rpc_client_.write(cmd_, reply_)))
+            if (!(port_rpc_client_.write(cmd_, reply_)))
                 yError() << "At line " << __LINE__ << ", in function " << __FUNCTION__ << ", cannot send the message";
 
             mutex_bottle_.unlock();
@@ -154,7 +154,7 @@ bool GraspExample::updateModule()
             start_time_ = std::chrono::steady_clock::now();
 
             /* Set the values of the joints to start moving the fingers. */
-            std::vector<double> joints_hand {0 ,0 ,0 ,0 ,62 ,72 ,0 };
+            std::vector<double> joints_hand {0 ,0 ,0 ,0 ,62 ,75 ,0 };
             position_->positionMove(joints.size(), joints.data(), joints_hand.data());
 
             /* Update the state. */
@@ -275,7 +275,7 @@ std::string GraspExample::NewRelativePosition(const double x, const double y, co
 }
 
 
-std::string GraspExample::NewRelativeOrientation(const double axis_x, const double axis_y, const double axis_z, const double angle, const double duration, const std::string& fixed_axes)
+std::string GraspExample::NewRelativeOrientation(const double axis_x, const double axis_y, const double axis_z, const double angle, const std::string& fixed_axes, const double duration)
 {
     /* Update the values. */
     mutex_bottle_.lock();
@@ -286,8 +286,8 @@ std::string GraspExample::NewRelativeOrientation(const double axis_x, const doub
     cmd_.addDouble(axis_y);
     cmd_.addDouble(axis_z);
     cmd_.addDouble(angle);
-    cmd_.addDouble(duration);
     cmd_.addString(fixed_axes);
+    cmd_.addDouble(duration);
 
     mutex_bottle_.unlock();
 

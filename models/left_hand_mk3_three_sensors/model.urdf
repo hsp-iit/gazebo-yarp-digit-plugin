@@ -402,8 +402,10 @@
         <SensorName3>collision_sensor_medium</SensorName3>
         <UpdatePeriod>0.001</UpdatePeriod>
     </plugin>
-    <plugin name="ControlHandPlugin" filename="libControlHandPlugin.so">
+    <plugin name="ControlPlugin" filename="libControlPlugin.so">
         <Gain> 10 </Gain>
+        <Link>SIM_LEFT_HAND::l_hand_palm_link</Link>
+        <PortOutputPoseName>/port-real-time-pose/output:o</PortOutputPoseName>
     </plugin>
     </gazebo>
 

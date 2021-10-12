@@ -26,8 +26,8 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR}"
 set(${TARGET_NAME}_THRIFT_HDR thrift/idl.thrift)
 yarp_add_idl(${TARGET_NAME}_THRIFT_SRC ${${TARGET_NAME}_THRIFT_HDR})
 
-add_library(ControlHandPlugin SHARED src/ControlHandPlugin.cpp  ${${TARGET_NAME}_THRIFT_SRC})
+add_library(ControlPlugin SHARED src/ControlPlugin.cpp  ${${TARGET_NAME}_THRIFT_SRC})
 
-target_include_directories(ControlHandPlugin PRIVATE ${GAZEBO_INCLUDE_DIRS})
+target_include_directories(ControlPlugin PRIVATE ${GAZEBO_INCLUDE_DIRS})
 
-target_link_libraries(ControlHandPlugin PRIVATE YARP::YARP_sig YARP::YARP_os ${GAZEBO_LIBRARIES})
+target_link_libraries(ControlPlugin PRIVATE YARP::YARP_sig YARP::YARP_os ${GAZEBO_LIBRARIES})

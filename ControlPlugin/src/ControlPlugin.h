@@ -1,3 +1,4 @@
+
 /*
  * Copyright (C) 2021 Istituto Italiano di Tecnologia (IIT)
  *
@@ -5,8 +6,8 @@
  * GPL-2+ license. See the accompanying LICENSE file for details.
  */
 
-#ifndef CONTROL_HAND_PLUGIN_H
-#define CONTROL_HAND_PLUGIN_H
+#ifndef CONTROL_PLUGIN_H
+#define CONTROL_PLUGIN_H
 
 #include <gazebo/gazebo.hh>
 #include <gazebo/physics/physics.hh>
@@ -18,21 +19,22 @@
 #include "TrajectoryGenerator.cpp"
 
 #include <yarp/os/BufferedPort.h>
+#include <yarp/sig/Vector.h>
 
 namespace gazebo
 {
-    class ControlHandPlugin;
+    class ControlPlugin;
 }
 
 
-class gazebo::ControlHandPlugin : public ModelPlugin,
+class gazebo::ControlPlugin : public ModelPlugin,
                                   public SetNewPoseIDL
 {
     public:
 
-        ControlHandPlugin();
+        ControlPlugin();
 
-        ~ControlHandPlugin();
+        ~ControlPlugin();
 
         void Load(physics::ModelPtr _model, sdf::ElementPtr _sdf);
 
@@ -50,7 +52,7 @@ class gazebo::ControlHandPlugin : public ModelPlugin,
 
         std::string NewRelativePosition(const double x, const double y, const double z, const double duration) override;
 
-        std::string NewRelativeOrientation(const double axis_x, const double axis_y, const double axis_z, const double angle, const double duration, const std::string& fixed_axes) override;
+        std::string NewRelativeOrientation(const double axis_x, const double axis_y, const double axis_z, const double angle, const std::string& fixed_axes, const double duration) override;
 
         std::string GoHome() override;
 
@@ -60,7 +62,7 @@ class gazebo::ControlHandPlugin : public ModelPlugin,
         bool LoadParameterFromSDF(sdf::ElementPtr sdf, const std::string &name, T& value);
 
         /* Pointer to the model. */
-        physics::ModelPtr hand_model_;
+        physics::ModelPtr object_model_;
 
         /* Pointer to the connection. */
         event::ConnectionPtr updateConnection_;
@@ -69,7 +71,7 @@ class gazebo::ControlHandPlugin : public ModelPlugin,
         double trajectory_duration_ = 5;
 
         /* Store for the starting pose. */
-        ignition::math::Pose3<double> start_pose_hand_;
+        ignition::math::Pose3<double> start_pose_object_;
 
         /* Flag to handle the first cycle. */
         bool is_motion_done_ = false;
@@ -85,8 +87,12 @@ class gazebo::ControlHandPlugin : public ModelPlugin,
 
         std::mutex mutex_;
 
-        bool send_new_pose_ = false, new_pose_sent_ = false;
+        /* Port to send out the real-time pose. */
+        yarp::os::BufferedPort<yarp::sig::Vector> port_pose_;
 
-        yarp::os::BufferedPort<yarp::os::Bottle> port_pose_;
+        std::string link_name_;
+
+        yarp::os::Network yarp_network_;
+
 };
-#endif /* CONTROL_HAND_PLUGIN_H */
+#endif /* CONTROL_PLUGIN_H */
