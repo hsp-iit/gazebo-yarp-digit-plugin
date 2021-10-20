@@ -9,7 +9,7 @@ include(FetchContent)
 FetchContent_Declare(
         tacto
         GIT_REPOSITORY https://github.com/facebookresearch/tacto.git
-        GIT_TAG        d9b6a8bddd83af40f4e65e08da5ce55790c4f2a5
+        GIT_TAG        10498c6326f86793583a2ab9fc3396fddad25c3e
         )
 message("-- Downloading tacto repository...")
 FetchContent_MakeAvailable(tacto)
