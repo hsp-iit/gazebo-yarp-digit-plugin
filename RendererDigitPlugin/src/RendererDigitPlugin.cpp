@@ -242,7 +242,7 @@ void gazebo::RendererPlugin::RenderingThread()
     pybind11::object sensor_digit = sensor_module
     (
         "background_path"_a = tacto_path_ + "/examples/conf/bg_digit_240_320.jpg",
-        "configuration_path"_a = tacto_path_ + "/tacto/config_digit.yml"
+        "configuration_path"_a = tacto_path_ + "/tacto/config_digit_shadow.yml"
     );
 
     /* Add the object to the scene. */

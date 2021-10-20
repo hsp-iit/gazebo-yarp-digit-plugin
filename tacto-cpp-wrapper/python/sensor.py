@@ -58,10 +58,6 @@ class Sensor:
 
         self.object_force[self.object_name] = force
 
-        #print(object_position)
-        #print(sensor_orientation)
-        #print(force)
-        #print(sensor_position)
         if self.object_force[self.object_name] > 0:
             # Update camera pose
             self.renderer.update_camera_pose(sensor_position, sensor_orientation)
@@ -74,7 +70,6 @@ class Sensor:
             # This function return RGB and depth matrices
             rgb, _ = self.renderer.render(self.object_pose, self.object_force)
 
-
         else:
 
             if self.static_rgb is None:
@@ -84,5 +79,7 @@ class Sensor:
             rgb = [self.renderer._add_noise(color) for color in self.static_rgb]
 
         rgb = np.concatenate(rgb, axis = 1)
+
+        rgb = cv2.cvtColor(rgb, cv2.COLOR_RGB2BGR)
 
         return rgb
