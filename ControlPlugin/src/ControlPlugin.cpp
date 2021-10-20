@@ -187,7 +187,6 @@ std::string gazebo::ControlPlugin::NewRelativePosition(const double x, const dou
 {
     std::string message_to_user;
 
-
     mutex_.lock();
 
     /* Check if the previous movement is finished. */
@@ -333,14 +332,15 @@ void gazebo::ControlPlugin::UpdateControl()
     pose.Rot().ToAxis(actual_axis, actual_angle);
 
     yarp::sig::VectorOf<double> & actual_pose = port_pose_.prepare();
-
-    actual_pose.push_back(pose.X());
-    actual_pose.push_back(pose.Y());
-    actual_pose.push_back(pose.Z());
-    actual_pose.push_back(actual_axis[0]);
-    actual_pose.push_back(actual_axis[1]);
-    actual_pose.push_back(actual_axis[2]);
-    actual_pose.push_back(actual_angle);
+    
+    actual_pose.resize(7);
+    actual_pose[0] = pose.X();
+    actual_pose[1] = pose.Y();
+    actual_pose[2] = pose.Z();
+    actual_pose[3] = actual_axis[0];
+    actual_pose[4] = actual_axis[1];
+    actual_pose[5] = actual_axis[2];
+    actual_pose[6] = actual_angle;
 
     port_pose_.write();
 }
