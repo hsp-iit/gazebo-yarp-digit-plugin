@@ -43,8 +43,14 @@
             <SensorName1>contact_digit</SensorName1>
             <UpdatePeriod>0.001</UpdatePeriod>
         </plugin>
+        <!-- The user can choose between the ControlDigitPlugin, which controls the DIGIT with a periodic movement, and the more flexible ControlPlugin. -->
         <plugin name="ControlDigitPlugin" filename="libControlDigitPlugin.so">
             <Gain>10</Gain>
         </plugin>
+        <!-- <plugin name="ControlPlugin" filename="libControlPlugin.so">
+            <Gain>10</Gain>
+            <Link>base</Link>
+            <PortOutputPoseName>/port-real-time-pose/output:o</PortOutputPoseName>
+        </plugin> -->
     </model>
 </sdf>

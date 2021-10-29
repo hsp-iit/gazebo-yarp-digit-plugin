@@ -6,7 +6,7 @@ install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/digit
                     ${CMAKE_CURRENT_SOURCE_DIR}/left_hand_mk3_three_sensors
                     ${CMAKE_CURRENT_SOURCE_DIR}/mustard_bottle
                     ${CMAKE_CURRENT_SOURCE_DIR}/env_table
-                DESTINATION share/gazebo/models)
+                    DESTINATION share/gazebo/models)
 
 include(GNUInstallDirs)
 
