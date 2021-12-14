@@ -11,6 +11,8 @@ service SetNewPoseIDL
 
     string NewOrientation(1: double axis_x, 2: double axis_y, 3: double axis_z, 4: double angle, 5: double duration);
 
+    string NewPosition(1: double x, 2: double y, 3: double z, 4: double duration);
+
     string NewRelativePosition(1: double x, 2: double y, 3: double z, 4: double duration);
 
     string NewRelativeOrientation(1: double axis_x, 2: double axis_y, 3: double axis_z, 4: double angle, 5: string fixed_axes, 6: double duration);

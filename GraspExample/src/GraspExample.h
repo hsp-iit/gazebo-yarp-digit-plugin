@@ -42,6 +42,8 @@ public:
 
     std::string NewOrientation(const double axis_x, const double axis_y, const double axis_z, const double angle, const double duration) override;
 
+    std::string NewPosition(const double x, const double y, const double z, const double duration) override;
+
     std::string NewRelativePosition(const double x, const double y, const double z, const double duration) override;
 
     std::string NewRelativeOrientation(const double axis_x, const double axis_y, const double axis_z, const double angle, const std::string& fixed_axes, const double duration) override;

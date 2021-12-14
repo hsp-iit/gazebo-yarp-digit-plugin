@@ -183,6 +183,36 @@ std::string gazebo::ControlPlugin::NewOrientation(const double axis_x, const dou
 }
 
 
+std::string gazebo::ControlPlugin::NewPosition(const double x, const double y, const double z, const double duration)
+{
+    std::string message_to_user;
+
+    mutex_.lock();
+
+    /* Check if the previous movement is finished. */
+    if (is_motion_done_)
+    {
+        /* Update the positiion and the trajectory duration. */
+        ignition::math::Pose3<double> current_pose = object_model_->GetLink(link_name_)->WorldPose();
+
+        /* Update the pose and the trajectory duration. */
+        trajectory_generator_->SetNewPose(ignition::math::Pose3<double>(
+                                          ignition::math::Vector3<double>(x, y, z),
+                                          current_pose.Rot()),
+                                          duration,
+                                          std::chrono::steady_clock::now());
+
+        message_to_user =  "Command accepted";
+    }
+    else
+        message_to_user = "Command not accepted";
+
+    mutex_.unlock();
+
+    return message_to_user;
+}
+
+
 std::string gazebo::ControlPlugin::NewRelativePosition(const double x, const double y, const double z, const double duration)
 {
     std::string message_to_user;
@@ -332,7 +362,7 @@ void gazebo::ControlPlugin::UpdateControl()
     pose.Rot().ToAxis(actual_axis, actual_angle);
 
     yarp::sig::VectorOf<double> & actual_pose = port_pose_.prepare();
-    
+
     actual_pose.resize(7);
     actual_pose[0] = pose.X();
     actual_pose[1] = pose.Y();

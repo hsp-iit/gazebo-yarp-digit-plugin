@@ -254,6 +254,27 @@ std::string GraspExample::NewOrientation(const double axis_x, const double axis_
 }
 
 
+std::string GraspExample::NewPosition(const double x, const double y, const double z, const double duration)
+{
+    /* Update the values. */
+    mutex_bottle_.lock();
+
+    cmd_.clear();
+    cmd_.addString("NewPosition");
+    cmd_.addDouble(x);
+    cmd_.addDouble(y);
+    cmd_.addDouble(z);
+    cmd_.addDouble(duration);
+
+    mutex_bottle_.unlock();
+
+    /* Update the state. */
+    GraspExample::SetState(State::SendMessage);
+
+    return "Command accepted by the module";
+}
+
+
 std::string GraspExample::NewRelativePosition(const double x, const double y, const double z, const double duration)
 {
     /* Update the values. */
