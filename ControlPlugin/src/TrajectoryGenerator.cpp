@@ -38,7 +38,7 @@ ignition::math::Quaternion<double> TrajectoryGenerator::ComputeOrientation()
         current_time_ = trajectory_duration_;
     }
 
-    return ignition::math::Quaternion<double>::Slerp(current_time_ / trajectory_duration_, starting_pose_.Rot(), final_pose_.Rot());
+    return ignition::math::Quaternion<double>::Slerp(current_time_ / trajectory_duration_, starting_pose_.Rot(), final_pose_.Rot(), true);
 }
 
 
