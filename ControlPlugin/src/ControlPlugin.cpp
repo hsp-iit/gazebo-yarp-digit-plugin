@@ -305,7 +305,7 @@ std::string gazebo::ControlPlugin::GoHome()
     {
         /* Go back to the starting configuration. */
         /* Update the pose and the trajectory duration. */
-        trajectory_generator_->SetNewPose(start_pose_object_, 10, std::chrono::steady_clock::now());
+        trajectory_generator_->SetNewPose(start_pose_object_, 5, std::chrono::steady_clock::now());
 
         message_to_user = "Command accepted";
     }
