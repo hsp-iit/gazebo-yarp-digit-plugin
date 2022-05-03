@@ -13,7 +13,7 @@ set(TARGET_NAME set-new-pose)
 
 find_package(gazebo REQUIRED)
 
-find_package(YARP REQUIRED COMPONENTS sig os)
+find_package(YARP REQUIRED COMPONENTS sig os idl_tools)
 
 list(APPEND CMAKE_CXX_FLAGS "${GAZEBO_CXX_FLAGS}")
 
