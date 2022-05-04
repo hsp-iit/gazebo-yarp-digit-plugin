@@ -19,7 +19,7 @@ This is a work in progress and very likely to change often:
 
 **We strongly advise to create a Python virtual environment before proceeding**.
 
-```
+```console
 git clone https://github.com/robotology-playground/gazebo-yarp-digit-plugin.git
 cd gazebo-yarp-digit-plugin
 mkdir build
@@ -28,13 +28,13 @@ cmake ../
 ```
 > At this point, please wait for the `TACTO` repository to be cloned.
 
-```
+```console
 pip install -r _deps/tacto-src/requirements/requirements.txt
 make -j
 ```
 
 > Then, put the following lines of code in the ~/.bashrc:
-```
+```console
 export GAZEBO_PLUGIN_PATH=$GAZEBO_PLUGIN_PATH:/path/to/the/repo/gazebo-yarp-digit-plugin/build/lib
 export GAZEBO_MODEL_PATH=$GAZEBO_MODEL_PATH:/path/to/the/repo/gazebo-yarp-digit-plugin/models
 
@@ -107,14 +107,14 @@ The code simulates the contact between the sensor and a small ball which touches
 1. Run the `yarpserver`
 
 2. Run the executable
-```
+```console
 gazebo ../world/digit_and_ball.world
 ```
 
 3. Open a terminals and write `yarpview --name /in:i`
 
 4. In another terminal, connect ports
-```
+```console
 yarp connect /gazebo-yarp-digit-plugin/output:o /in:i
 ```
 
@@ -123,14 +123,14 @@ yarp connect /gazebo-yarp-digit-plugin/output:o /in:i
 1. Run the `yarpserver`
 
 2. Run the executable
-```
+```console
 gazebo world/hand_one_sensor.world
 ```
 
 3. Open a terminals and write `yarpview --name /medium:i`
 
 4. In another terminal, connect ports
-```
+```console
 yarp connect /gazebo-yarp-digit-plugin-sensor_link_medium"/output:o /medium:i
 ```
 5. Launch the binary `./build/bin/grasp-example`
@@ -143,12 +143,12 @@ yarp connect /gazebo-yarp-digit-plugin-sensor_link_medium"/output:o /medium:i
 1. Run the `yarpserver`
 
 2. Run the executable
-```
+```console
 gazebo world/hand_three_sensors.world
 ```
 3. Open 3 terminals and write `yarpview --name /thumb:i` `yarpview --name /index:i` `yarpview --name /medium:i`
 4. In another terminal, connect ports
-```
+```console
 yarp connect /gazebo-yarp-digit-plugin-sensor_link_thumb/output:o /in1:i
 yarp connect /gazebo-yarp-digit-plugin-sensor_link_index/output:o /in2:i
 yarp connect /gazebo-yarp-digit-plugin-sensor_link_medium/output:o /in3:i
