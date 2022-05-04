@@ -33,6 +33,13 @@ pip install -r _deps/tacto-src/requirements/requirements.txt
 make -j
 ```
 
+> Then, put the following lines of code in the ~/.bashrc:
+```
+export GAZEBO_PLUGIN_PATH=$GAZEBO_PLUGIN_PATH:/path/to/the/repo/gazebo-yarp-digit-plugin/build/lib
+export GAZEBO_MODEL_PATH=$GAZEBO_MODEL_PATH:/path/to/the/repo/gazebo-yarp-digit-plugin/models
+
+```
+(Remember to source the .bashrc)
 ## How to attach a DIGIT to your model
 The following snippet code is an example on how to add the DIGIT link to your robot
 ```xml
