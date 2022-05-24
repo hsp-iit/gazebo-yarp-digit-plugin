@@ -110,8 +110,8 @@ The following snippet shows how to declare the ControlPlugin
 <plugin name="ControlPlugin" filename="libControlPlugin.so">
     <Gain>10</Gain>
     <Link>link_name</Link>
-    <PortOutputPoseName>name_of_the_output_port</PortOutputPoseName>
-    <PortRpcName>name_of_the_rpc_port</PortRpcName>
+    <PortOutputPoseName>/name/of/the/output/port</PortOutputPoseName>
+    <PortRpcName>/name/of/the/rpc/port</PortRpcName>
 </plugin>
 ```
 The `Link` parameter indicates the name of the link that is controlled.  
