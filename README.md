@@ -94,8 +94,28 @@ The following snippet shows how to declare the RendererDigitPlugin
 The `ObjectName` parameter is the name of the object the sensors are sensitive to.  
 The `ObjectMeshAbsolutePath` parameter is the path of the mesh of the object.  
 The `NumberOfSensors` parameter indicates the number of sensors in the model.  
-The `LinkName` and `SensorName` parameters indicates the name of the links and sensors attached to them.  
+The `LinkName` and `SensorName` parameters indicate the name of the links and sensors attached to them.  
 The `UpdatePeriod` parameters indicates the sleep time of the rendering thread in seconds.
+
+
+The following snippet shows how to declare the ControlDigitPlugin
+```xml
+<plugin name="ControlDigitPlugin" filename="libControlDigitPlugin.so">
+    <Gain>10</Gain>
+</plugin>
+```
+The following snippet shows how to declare the ControlPlugin
+```xml
+
+<plugin name="ControlPlugin" filename="libControlPlugin.so">
+    <Gain>10</Gain>
+    <Link>link_name</Link>
+    <PortOutputPoseName>name_of_the_output_port</PortOutputPoseName>
+    <PortRpcName>name_of_the_rpc_port</PortRpcName>
+</plugin>
+```
+The `Link` parameter indicates the name of the link that is controlled.  
+The `PortOutputPoseName` and `PortRpcName` indicates the names of the port which outputs the real time pose of the link and the name of the rpc port to send command to.
 
 At the moment, the urdf snippet code is not available.
 
