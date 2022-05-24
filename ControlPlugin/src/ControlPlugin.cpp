@@ -74,7 +74,7 @@ void gazebo::ControlPlugin::Load(physics::ModelPtr model, sdf::ElementPtr sdf)
                                       std::chrono::steady_clock::now());
 
     /* Open RPC port and attach to respond handler. */
-    if (!port_rpc_.open("/control-object-port/rpc:i"))
+    if (!port_rpc_.open("/control-" + link_name_ + "-port/rpc:i"))
     {
         yError() << "At line " << __LINE__ << ", in function " << __FUNCTION__ << ", cannot open rpc port. Closing the plugin thread.";
 
