@@ -83,7 +83,7 @@ void gazebo::ControlPlugin::Load(physics::ModelPtr model, sdf::ElementPtr sdf)
     }
 
     /* Open RPC port and attach to respond handler. */
-    if (!port_rpc_.open(rpc_port_name + "/rpc:i"))
+    if (!port_rpc_.open(rpc_port_name))
     {
         yError() << "At line " << __LINE__ << ", in function " << __FUNCTION__ << ", cannot open rpc port. Closing the plugin thread.";
 
