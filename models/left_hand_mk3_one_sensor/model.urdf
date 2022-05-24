@@ -378,6 +378,7 @@
     <plugin name="ControlPlugin" filename="libControlPlugin.so">
         <Gain> 10 </Gain>
         <Link>SIM_LEFT_HAND::l_hand_palm_link</Link>
+        <PortRpcName>control-hand-port</PortRpcName>
         <PortOutputPoseName>/port-real-time-pose/output:o</PortOutputPoseName>
     </plugin>
     </gazebo>

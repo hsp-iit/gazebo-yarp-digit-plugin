@@ -36,8 +36,8 @@
             </sensor>
         </link>
         <plugin name="RendererDigitPlugin" filename="libRendererDigitPlugin.so">
-            <ObjectName>sphere</ObjectName>
-            <ObjectMeshAbsolutePath>/home/gabriele/Desktop/gabriele/Gabriele/gazebo-yarp-digit-plugin/models/sphere_digit/mesh/textured_sphere_smooth_meters.obj</ObjectMeshAbsolutePath>
+            <ObjectName>004_sugar_box</ObjectName>
+            <ObjectMeshAbsolutePath>/home/gabriele/Desktop/gabriele/Gabriele/tactile-data-association/simulation/models/004_sugar_box/textured.obj</ObjectMeshAbsolutePath>  <!--/home/gabriele/Desktop/gabriele/Gabriele/gazebo-yarp-digit-plugin/models/sphere_digit/mesh/textured_sphere_smooth_meters.obj -->
             <NumberOfSensors>1</NumberOfSensors>
             <LinkName1>base</LinkName1>
             <SensorName1>contact_digit</SensorName1>
@@ -51,6 +51,7 @@
             <Gain>10</Gain>
             <Link>base</Link>
             <PortOutputPoseName>/port-real-time-pose/output:o</PortOutputPoseName>
+            <PortRpcName>control-digit-port</PortRpcName>
         </plugin> -->
     </model>
 </sdf>

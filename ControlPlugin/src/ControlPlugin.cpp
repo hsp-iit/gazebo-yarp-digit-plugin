@@ -73,8 +73,17 @@ void gazebo::ControlPlugin::Load(physics::ModelPtr model, sdf::ElementPtr sdf)
                                       trajectory_duration_,
                                       std::chrono::steady_clock::now());
 
+    std::string rpc_port_name;
+
+    if (!LoadParameterFromSDF(sdf, "PortRpcName", rpc_port_name))
+    {
+        yError() << "At line " << __LINE__ << ", in function " << __FUNCTION__ << ", error with PortRpcName parameter. Closing the plugin thread.";
+
+        std::terminate();
+    }
+
     /* Open RPC port and attach to respond handler. */
-    if (!port_rpc_.open("/control-" + link_name_ + "-port/rpc:i"))
+    if (!port_rpc_.open(rpc_port_name + "/rpc:i"))
     {
         yError() << "At line " << __LINE__ << ", in function " << __FUNCTION__ << ", cannot open rpc port. Closing the plugin thread.";
 
@@ -113,7 +122,7 @@ void gazebo::ControlPlugin::Load(physics::ModelPtr model, sdf::ElementPtr sdf)
 
     if (!LoadParameterFromSDF(sdf, "PortOutputPoseName", port_name))
     {
-        yError() << "At line " << __LINE__ << ", in function " << __FUNCTION__ << ", error with Gain parameter. Closing the plugin thread.";
+        yError() << "At line " << __LINE__ << ", in function " << __FUNCTION__ << ", error with PortOutputPoseName parameter. Closing the plugin thread.";
 
         std::terminate();
     }
