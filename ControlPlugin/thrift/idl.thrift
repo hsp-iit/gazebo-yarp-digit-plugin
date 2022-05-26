@@ -17,7 +17,13 @@ service SetNewPoseIDL
 
     string NewRelativeOrientation(1: double axis_x, 2: double axis_y, 3: double axis_z, 4: double angle, 5: string fixed_axes, 6: double duration);
 
+    string SetStaticPose(1: double x, 2: double y, 3: double z, 4: double axis_x, 5: double axis_y, 6: double axis_z, 7: double angle);
+
+    string SetStaticPosition(1: double x, 2: double y, 3: double z);
+
+    string SetStaticOrientation(1: double axis_x, 2: double axis_y, 3: double axis_z, 4: double angle);
+
     string GoHome();
-    
+
     string SetControlStatus(1: string status);
 }
