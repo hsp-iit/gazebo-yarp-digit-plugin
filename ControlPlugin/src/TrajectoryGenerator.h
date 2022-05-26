@@ -19,6 +19,8 @@ public:
 
     void SetNewPose(ignition::math::Pose3<double> new_pose, double trajectory_duration, std::chrono::time_point<std::chrono::steady_clock> start_time);
 
+    void SetNewPose(ignition::math::Pose3<double> new_pose, ignition::math::Pose3<double> starting_pose, double trajectory_duration, std::chrono::time_point<std::chrono::steady_clock> start_time);
+
     bool UpdatePose(std::chrono::time_point<std::chrono::steady_clock> time);
 
     double GetLinearVelocityX();

@@ -327,6 +327,31 @@ std::string gazebo::ControlPlugin::GoHome()
 }
 
 
+std::string gazebo::ControlPlugin::SetControlStatus(const std::string& status)
+{
+    std::string message_to_user;
+    mutex_.lock();
+
+    if (status == "false" || status == "False")
+    {
+        is_control_on_ = false;
+        message_to_user = "Control disabled";
+    }
+    else if (status == "true" || status == "True")
+    {
+        /* Reset the trajectory to the current pose of the object. */
+        ignition::math::Pose3<double> current_pose = object_model_->GetLink(link_name_)->WorldPose();
+        trajectory_generator_->SetNewPose(current_pose, current_pose, 1.0, std::chrono::steady_clock::now());
+        is_control_on_ = true;
+        message_to_user = "Control enabled";
+    }
+
+    mutex_.unlock();
+
+    return message_to_user;
+}
+
+
 void gazebo::ControlPlugin::UpdateControl()
 {
     mutex_.lock();
@@ -356,16 +381,27 @@ void gazebo::ControlPlugin::UpdateControl()
     velocity_vector = matrix_actual * object_model_->GetLink(link_name_)->RelativeLinearVel();
     velocity_vector_angular = matrix_actual * object_model_->GetLink(link_name_)->RelativeAngularVel();
 
-    /* Apply the forces to the object. */
-    double controlX = p_gain_ * (desired_pose.X() - pose.X()) + 2 * std::sqrt(p_gain_) * (trajectory_generator_->GetLinearVelocityX() - velocity_vector.X());
-    double controlY = p_gain_ * (desired_pose.Y() - pose.Y()) + 2 * std::sqrt(p_gain_) * (trajectory_generator_->GetLinearVelocityY() - velocity_vector.Y());
-    double controlZ = p_gain_ * (desired_pose.Z() - pose.Z()) + 2 * std::sqrt(p_gain_) * (trajectory_generator_->GetLinearVelocityZ() - velocity_vector.Z());
+    /* Check if the control in enabled */
+    bool is_control_on;
+    mutex_.lock();
+    
+    is_control_on = is_control_on_;
 
-    object_model_->GetLink(link_name_)->SetForce(ignition::math::Vector3d(controlX, controlY, controlZ));
+    mutex_.unlock();
 
-    /* Apply the torque to the body. */
-    object_model_->GetLink(link_name_)->SetTorque(p_gain_ * axis + 2 * std::sqrt(p_gain_) * (0 - velocity_vector_angular));
+    if (is_control_on)
+    {
+        /* Apply the forces to the object. */
+        double controlX = p_gain_ * (desired_pose.X() - pose.X()) + 2 * std::sqrt(p_gain_) * (trajectory_generator_->GetLinearVelocityX() - velocity_vector.X());
+        double controlY = p_gain_ * (desired_pose.Y() - pose.Y()) + 2 * std::sqrt(p_gain_) * (trajectory_generator_->GetLinearVelocityY() - velocity_vector.Y());
+        double controlZ = p_gain_ * (desired_pose.Z() - pose.Z()) + 2 * std::sqrt(p_gain_) * (trajectory_generator_->GetLinearVelocityZ() - velocity_vector.Z());
 
+        object_model_->GetLink(link_name_)->SetForce(ignition::math::Vector3d(controlX, controlY, controlZ));
+
+        /* Apply the torque to the body. */
+        object_model_->GetLink(link_name_)->SetTorque(p_gain_ * axis + 2 * std::sqrt(p_gain_) * (0 - velocity_vector_angular)); 
+    }
+    
     ignition::math::Vector3<double> actual_axis;
     double actual_angle;
     pose.Rot().ToAxis(actual_axis, actual_angle);

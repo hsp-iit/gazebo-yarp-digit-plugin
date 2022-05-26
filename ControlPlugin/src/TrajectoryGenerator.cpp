@@ -30,6 +30,15 @@ void TrajectoryGenerator::SetNewPose(ignition::math::Pose3<double> new_pose, dou
 }
 
 
+void TrajectoryGenerator::SetNewPose(ignition::math::Pose3<double> new_pose, ignition::math::Pose3<double> starting_pose, double trajectory_duration, std::chrono::time_point<std::chrono::steady_clock> start_time)
+{
+    starting_pose_ = starting_pose;
+    final_pose_ = new_pose;
+    trajectory_duration_ = trajectory_duration;
+    start_time_ = start_time;
+}
+
+
 ignition::math::Quaternion<double> TrajectoryGenerator::ComputeOrientation()
 {
     /* Check if the time variable reached the limit. */
