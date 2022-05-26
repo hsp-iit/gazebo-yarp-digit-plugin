@@ -28,7 +28,7 @@ namespace gazebo
 
 
 class gazebo::ControlPlugin : public ModelPlugin,
-                                  public SetNewPoseIDL
+                              public SetNewPoseIDL
 {
     public:
 
@@ -56,8 +56,14 @@ class gazebo::ControlPlugin : public ModelPlugin,
 
         std::string NewRelativeOrientation(const double axis_x, const double axis_y, const double axis_z, const double angle, const std::string& fixed_axes, const double duration) override;
 
+        std::string SetStaticPose(const double x, const double y, const double z, const double axis_x, const double axis_y, const double axis_z, const double angle) override;
+
+        std::string SetStaticPosition(const double x, const double y, const double z) override;
+
+        std::string SetStaticOrientation(const double axis_x, const double axis_y, const double axis_z, const double angle) override;
+
         std::string GoHome() override;
-        
+
         std::string SetControlStatus(const std::string& status);
 
     private:
@@ -79,7 +85,7 @@ class gazebo::ControlPlugin : public ModelPlugin,
 
         /* Flag to handle the first cycle. */
         bool is_motion_done_ = false;
-        
+
         /* Flag to handle control status */
         bool is_control_on_ = true;
 

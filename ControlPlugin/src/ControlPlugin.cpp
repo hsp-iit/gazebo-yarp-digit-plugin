@@ -303,6 +303,83 @@ std::string gazebo::ControlPlugin::NewRelativeOrientation(const double axis_x, c
 }
 
 
+std::string gazebo::ControlPlugin::SetStaticPose(const double x, const double y, const double z, const double axis_x, const double axis_y, const double axis_z, const double angle)
+{
+    mutex_.lock();
+
+    /* Compose the pose. */
+    ignition::math::Pose3<double> pose(ignition::math::Vector3<double>(x, y, z),
+                                       ignition::math::Quaternion<double>(ignition::math::Vector3<double>(axis_x, axis_y, axis_z), angle));
+
+    /* Disable the controller within UpdateControl(). */
+    is_control_on_ = false;
+
+    /* Reset any force/torque. */
+    object_model_->GetLink(link_name_)->SetForce(ignition::math::Vector3d(0.0, 0.0, 0.0));
+    object_model_->GetLink(link_name_)->SetTorque(ignition::math::Vector3d(0.0, 0.0, 0.0));
+
+    /* Set the pose. */
+    object_model_->GetLink(link_name_)->SetWorldPose(pose);
+
+    mutex_.unlock();
+
+    return "Command accepted";
+}
+
+
+std::string gazebo::ControlPlugin::SetStaticPosition(const double x, const double y, const double z)
+{
+    mutex_.lock();
+
+    /* Get the current pose. */
+    ignition::math::Pose3<double> current_pose = object_model_->GetLink(link_name_)->WorldPose();
+
+    /* Compose the pose. */
+    ignition::math::Pose3<double> pose(ignition::math::Vector3<double>(x, y, z), current_pose.Rot());
+
+    /* Disable the controller within UpdateControl(). */
+    is_control_on_ = false;
+
+    /* Reset any force/torque. */
+    object_model_->GetLink(link_name_)->SetForce(ignition::math::Vector3d(0.0, 0.0, 0.0));
+    object_model_->GetLink(link_name_)->SetTorque(ignition::math::Vector3d(0.0, 0.0, 0.0));
+
+    /* Set the pose. */
+    object_model_->GetLink(link_name_)->SetWorldPose(pose);
+
+    mutex_.unlock();
+
+    return "Command accepted";
+}
+
+
+std::string gazebo::ControlPlugin::SetStaticOrientation(const double axis_x, const double axis_y, const double axis_z, const double angle)
+{
+    mutex_.lock();
+
+    /* Get the current pose. */
+    ignition::math::Pose3<double> current_pose = object_model_->GetLink(link_name_)->WorldPose();
+
+    /* Compose the pose. */
+    ignition::math::Pose3<double> pose(ignition::math::Vector3<double>(current_pose.X(), current_pose.Y(), current_pose.Z()),
+                                       ignition::math::Quaternion<double>(ignition::math::Vector3<double>(axis_x, axis_y, axis_z), angle));
+
+    /* Disable the controller within UpdateControl(). */
+    is_control_on_ = false;
+
+    /* Reset any force/torque. */
+    object_model_->GetLink(link_name_)->SetForce(ignition::math::Vector3d(0.0, 0.0, 0.0));
+    object_model_->GetLink(link_name_)->SetTorque(ignition::math::Vector3d(0.0, 0.0, 0.0));
+
+    /* Set the pose. */
+    object_model_->GetLink(link_name_)->SetWorldPose(pose);
+
+    mutex_.unlock();
+
+    return "Command accepted";
+}
+
+
 std::string gazebo::ControlPlugin::GoHome()
 {
     std::string message_to_user;
@@ -384,7 +461,7 @@ void gazebo::ControlPlugin::UpdateControl()
     /* Check if the control in enabled */
     bool is_control_on;
     mutex_.lock();
-    
+
     is_control_on = is_control_on_;
 
     mutex_.unlock();
@@ -399,9 +476,9 @@ void gazebo::ControlPlugin::UpdateControl()
         object_model_->GetLink(link_name_)->SetForce(ignition::math::Vector3d(controlX, controlY, controlZ));
 
         /* Apply the torque to the body. */
-        object_model_->GetLink(link_name_)->SetTorque(p_gain_ * axis + 2 * std::sqrt(p_gain_) * (0 - velocity_vector_angular)); 
+        object_model_->GetLink(link_name_)->SetTorque(p_gain_ * axis + 2 * std::sqrt(p_gain_) * (0 - velocity_vector_angular));
     }
-    
+
     ignition::math::Vector3<double> actual_axis;
     double actual_angle;
     pose.Rot().ToAxis(actual_axis, actual_angle);
