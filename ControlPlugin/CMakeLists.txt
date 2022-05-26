@@ -30,4 +30,4 @@ add_library(ControlPlugin SHARED src/ControlPlugin.cpp  ${${TARGET_NAME}_THRIFT_
 
 target_include_directories(ControlPlugin PRIVATE ${GAZEBO_INCLUDE_DIRS})
 
-target_link_libraries(ControlPlugin PRIVATE YARP::YARP_sig YARP::YARP_os ${GAZEBO_LIBRARIES})
+target_link_libraries(ControlPlugin PRIVATE YARP::YARP_sig YARP::YARP_os YARP::YARP_init ${GAZEBO_LIBRARIES})

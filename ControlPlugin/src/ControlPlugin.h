@@ -57,6 +57,8 @@ class gazebo::ControlPlugin : public ModelPlugin,
         std::string NewRelativeOrientation(const double axis_x, const double axis_y, const double axis_z, const double angle, const std::string& fixed_axes, const double duration) override;
 
         std::string GoHome() override;
+        
+        std::string SetControlStatus(const std::string& status);
 
     private:
 
@@ -77,6 +79,9 @@ class gazebo::ControlPlugin : public ModelPlugin,
 
         /* Flag to handle the first cycle. */
         bool is_motion_done_ = false;
+        
+        /* Flag to handle control status */
+        bool is_control_on_ = true;
 
         /* Pointer to the trajectory generator. */
         std::unique_ptr<TrajectoryGenerator> trajectory_generator_;
