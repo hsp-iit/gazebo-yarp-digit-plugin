@@ -214,14 +214,14 @@ std::string GraspExample::NewPose(const double x, const double y, const double z
 
     cmd_.clear();
     cmd_.addString("NewPose");
-    cmd_.addDouble(x);
-    cmd_.addDouble(y);
-    cmd_.addDouble(z);
-    cmd_.addDouble(axis_x);
-    cmd_.addDouble(axis_y);
-    cmd_.addDouble(axis_z);
-    cmd_.addDouble(angle);
-    cmd_.addDouble(duration);
+    cmd_.addFloat64(x);
+    cmd_.addFloat64(y);
+    cmd_.addFloat64(z);
+    cmd_.addFloat64(axis_x);
+    cmd_.addFloat64(axis_y);
+    cmd_.addFloat64(axis_z);
+    cmd_.addFloat64(angle);
+    cmd_.addFloat64(duration);
 
     mutex_bottle_.unlock();
 
@@ -239,11 +239,11 @@ std::string GraspExample::NewOrientation(const double axis_x, const double axis_
 
     cmd_.clear();
     cmd_.addString("NewOrientation");
-    cmd_.addDouble(axis_x);
-    cmd_.addDouble(axis_y);
-    cmd_.addDouble(axis_z);
-    cmd_.addDouble(angle);
-    cmd_.addDouble(duration);
+    cmd_.addFloat64(axis_x);
+    cmd_.addFloat64(axis_y);
+    cmd_.addFloat64(axis_z);
+    cmd_.addFloat64(angle);
+    cmd_.addFloat64(duration);
 
     mutex_bottle_.unlock();
 
@@ -261,10 +261,10 @@ std::string GraspExample::NewPosition(const double x, const double y, const doub
 
     cmd_.clear();
     cmd_.addString("NewPosition");
-    cmd_.addDouble(x);
-    cmd_.addDouble(y);
-    cmd_.addDouble(z);
-    cmd_.addDouble(duration);
+    cmd_.addFloat64(x);
+    cmd_.addFloat64(y);
+    cmd_.addFloat64(z);
+    cmd_.addFloat64(duration);
 
     mutex_bottle_.unlock();
 
@@ -282,10 +282,10 @@ std::string GraspExample::NewRelativePosition(const double x, const double y, co
 
     cmd_.clear();
     cmd_.addString("NewRelativePosition");
-    cmd_.addDouble(x);
-    cmd_.addDouble(y);
-    cmd_.addDouble(z);
-    cmd_.addDouble(duration);
+    cmd_.addFloat64(x);
+    cmd_.addFloat64(y);
+    cmd_.addFloat64(z);
+    cmd_.addFloat64(duration);
 
     mutex_bottle_.unlock();
 
@@ -303,12 +303,12 @@ std::string GraspExample::NewRelativeOrientation(const double axis_x, const doub
 
     cmd_.clear();
     cmd_.addString("NewRelativeOrientation");
-    cmd_.addDouble(axis_x);
-    cmd_.addDouble(axis_y);
-    cmd_.addDouble(axis_z);
-    cmd_.addDouble(angle);
+    cmd_.addFloat64(axis_x);
+    cmd_.addFloat64(axis_y);
+    cmd_.addFloat64(axis_z);
+    cmd_.addFloat64(angle);
     cmd_.addString(fixed_axes);
-    cmd_.addDouble(duration);
+    cmd_.addFloat64(duration);
 
     mutex_bottle_.unlock();
 
