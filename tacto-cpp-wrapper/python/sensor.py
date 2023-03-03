@@ -5,7 +5,7 @@ import trimesh
 import sys
 from tacto import Renderer
 
-
+import time
 class Sensor:
 
     def __init__(self, background_path, configuration_path):
@@ -68,18 +68,28 @@ class Sensor:
 
 
             # This function return RGB and depth matrices
-            rgb, _ = self.renderer.render(self.object_pose, self.object_force)
-
+            rgb, depth = self.renderer.render(self.object_pose, self.object_force)
+            for j in range(len(depth)):
+                depth[j] = self.renderer.depth0[j] - depth[j]
+            
         else:
 
             if self.static_rgb is None:
 
-                self.static_rgb, _ = self.renderer.render(noise = False)
+                self.static_rgb, depth = self.renderer.render(noise = False)
 
             rgb = [self.renderer._add_noise(color) for color in self.static_rgb]
 
         rgb = np.concatenate(rgb, axis = 1)
+        
+        depth = np.concatenate(depth, axis=1)
+        gray = (np.clip(depth/0.002, 0, 1) * 255).astype(np.uint8)
+        
+        cv2.imwrite('/home/gabriele/images_depth/ciao.png', gray)
+        # time.sleep(1)
+        # gray = cv2.cvtColor(gray, cv2.COLOR_GRAY2BGR)
+        # print(depth.shape)
 
         rgb = cv2.cvtColor(rgb, cv2.COLOR_RGB2BGR)
 
-        return rgb
+        return [rgb, gray]

@@ -218,10 +218,13 @@ void gazebo::RendererPlugin::RenderingThread()
     /* Initialize YARP port. */
     yarp::os::Network yarp;
     std::unordered_map<std::string, yarp::os::BufferedPort<yarp::sig::ImageOf<yarp::sig::PixelRgb>>> port;
+    std::unordered_map<std::string, yarp::os::BufferedPort<yarp::sig::ImageOf<yarp::sig::PixelMono>>> port_depth;
 
     /* Initialize the output image. */
     pybind11::array_t<uint8_t> rgb;
+    pybind11::array_t<uint8_t> depth;
     cv::Mat img;
+    cv::Mat img_depth;
 
     /* Get the pose of the object. */
     pose_object_ = object_model_->GetLink()->WorldPose();
@@ -236,13 +239,15 @@ void gazebo::RendererPlugin::RenderingThread()
 
     /* Open the YARP ports. */
     for (auto elem : sensors_link_name_)
+    {
         port[elem].open("/gazebo-yarp-digit-plugin-" + elem + "/output:o");
-
+        port_depth[elem].open("/depth-gazebo-yarp-digit-plugin-" + elem + "/output:o");
+    }
     /* Instantiate an object of the sensor class. */
     pybind11::object sensor_digit = sensor_module
     (
-        "background_path"_a = tacto_path_ + "/examples/conf/bg_digit_240_320.jpg",
-        "configuration_path"_a = tacto_path_ + "/tacto/config_digit_shadow.yml"
+        "background_path"_a = std::string(SOURCE_PATH) + "/image_background.png",
+        "configuration_path"_a = tacto_path_ + "/tacto/config_digit.yml"
     );
 
     /* Add the object to the scene. */
@@ -263,7 +268,7 @@ void gazebo::RendererPlugin::RenderingThread()
     pybind11::list orientation_sensor_thread;
 
     /* Initiliaze the force variable for the contact forces computed by the main thread. */
-    float force;
+    float force = 0;
 
     while(true)
     {
@@ -292,27 +297,34 @@ void gazebo::RendererPlugin::RenderingThread()
             /* Change the sign of the force since the renderer expects a positive force. */
             force = abs(forces_[elem]);
             mutex_.unlock();
-
+            pybind11::list outputs;
             /* Call the renderer. */
-            pybind11::array_t<uint8_t> rgb = sensor_digit.attr("render")
+            //pybind11::array_t<uint8_t> rgb, pybind11::array_t<uint8_t> depth = sensor_digit.attr("render")
+            outputs = sensor_digit.attr("render")
             (
                 "object_position"_a = position_object,
                 "object_orientation"_a = orientation_object,
                 "sensor_position"_a = position_sensor_thread,
                 "sensor_orientation"_a = orientation_sensor_thread,
-                "force"_a = force
+                "force"_a = 1
 
             );
 
-            /* Convert the image. */
-            img = cv::Mat(rgb.shape(0), rgb.shape(1), CV_8UC3, (unsigned char*)rgb.data());
+            pybind11::array_t<uint8_t> rgb = outputs[0].cast<pybind11::array_t<uint8_t>>();
+            pybind11::array_t<uint8_t> depth = outputs[1].cast<pybind11::array_t<uint8_t>>();
 
+            /* Convert the image. */
+
+            img = cv::Mat(rgb.shape(0), rgb.shape(1), CV_8UC3, (unsigned char*)rgb.data());
+            img_depth = cv::Mat(depth.shape(0), depth.shape(1), CV_8UC1, (unsigned char*)depth.data());
             /* Prepare the output and convert fromCVMat. */
             yarp::sig::ImageOf<yarp::sig::PixelRgb>& output = port[elem].prepare();
             output = yarp::cv::fromCvMat<yarp::sig::PixelRgb>(img);
-
+            yarp::sig::ImageOf<yarp::sig::PixelMono>& output_depth = port_depth[elem].prepare();
+            output_depth = yarp::cv::fromCvMat<yarp::sig::PixelMono>(img_depth);
             /* Write into the port. */
             port[elem].write();
+            port_depth[elem].write();
 
         }
 
